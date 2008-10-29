@@ -1,0 +1,9 @@
+-R . Coalgebras
+-R ../QArithSternBrocot QArithSternBrocot
+Bisimulation.v
+CoPeanoCoalgebra.v
+ExtensionalFunctor.v
+LambdaCoiterationExamples.v
+LambdaCoiteration.v
+WeaklyFinalCoalgebra.v
+ZStreamCoalgebra.v

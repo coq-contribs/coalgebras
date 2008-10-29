@@ -1,0 +1,41 @@
+DESCRIPTION
+
+ This contribution contains a formalisation of coalgebras,
+ bisimulation on coalgebras, weakly final coalgebras and
+ lambda-coiteration definition scheme. The formalisation is
+ modular. The implementation of the module types for streams and
+ potentially infinite Peano numbers are provided using the coinductive
+ types.
+
+
+USAGE
+
+ The files should be compiled using Coq version 8.2 or higher.
+
+ In order to compile the files using the provided Makefile simply call
+ make:
+
+ $ make
+
+ Importing WeaklyFinalCoalgebra.v will import all the module
+ types. LambdaCoiteration.v provides lambda-coiteration scheme on top
+ of that. ZStreamCoalgebra.v and CoPeanoCoalgebra.v contain
+ implementation modules for streams and potentially infinite Peano
+ numbers. Usage examples are found in LambdaCoiterationExamples.v
+
+AUTHOR
+
+ Milad Niqui (Centrum Wiskunde & Informatica, Amsterdam)
+
+
+LICENSE
+
+ LGPL (GNU Lesser General Public License Version 3)
+ A copy of this license is distributed in this package in the file
+ LICENSE.
+
+
+DATE
+
+ 24-10-2008
+

@@ -1,0 +1,10 @@
+Name: Coalgebras
+Title: Coalgebras, bisimulation and lambda-coiteration
+Description: This contribution contains a formalisation of coalgebras, bisimulation on coalgebras, weakly final coalgebras and lambda-coiteration definition scheme. The formalisation is modular. The implementation of the module types for streams and potentially infinite Peano numbers are provided using the coinductive types.
+Keywords: coalgebra, bisimulation, weakly final, coiteration, coinductive
+Category: Mathematics/Category Theory
+Author: Milad Niqui
+Email: M.Niqui@cwi.nl
+Homepage: http://homepages.cwi.nl/~milad
+Institution: Centrum Wiskunde & Informatica (CWI)
+License: LGPL
