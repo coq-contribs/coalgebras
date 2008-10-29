@@ -59,9 +59,9 @@ else
   $(error Cannot find coqtop in path; set variable COQBIN to the directory where coqtop is located)
 endif
 COQLIBS:= -R . Coalgebras\
-  -R ../QArithSternBrocot QArithSternBrocot
+  -R ../../Nijmegen/QArithSternBrocot QArithSternBrocot
 COQDOCLIBS:=-R . Coalgebras\
-  -R ../QArithSternBrocot QArithSternBrocot
+  -R ../../Nijmegen/QArithSternBrocot QArithSternBrocot
 
 ##########################
 #                        #
