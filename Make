@@ -1,5 +1,5 @@
 -R . Coalgebras
--R ../QArithSternBrocot QArithSternBrocot
+-R ../../Nijmegen/QArithSternBrocot QArithSternBrocot
 Bisimulation.v
 CoPeanoCoalgebra.v
 ExtensionalFunctor.v
