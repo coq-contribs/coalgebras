@@ -3,7 +3,7 @@
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
-(*                  <http://www.gnu.org/licenses/lgpl.txt>              *)
+(*                  <http://www.gnu.org/licenses/lgpl-3.0.html>         *)
 (************************************************************************)
 
 (** Module type for extensional functors, and some parametrised
@@ -71,18 +71,36 @@ Proof.
   apply (lift_F_compose X Y Z g f).
 Defined.
 
+Lemma lift_F_iter_id (X:Set) j (fx:F_iter j X): fx = lift_F_iter X X (fun x0 : X => x0) j fx.
+Proof.
+ intros X j fx; revert X fx.
+ induction j; intros X fx. 
+  simpl; trivial.
+  simpl in *.
+  transitivity (lift_F_iter (F_ X) (F_ X) (fun x0 : F_ X => x0) j fx).
+   apply IHj. 
+   apply lift_F_iter_extensionality.  
+   apply lift_F_id.
+Defined.
+
 End Set_Functor_Iter_theory.
 
-
 Close Scope nat_scope.
+
 
 (* ################################################################################ *)
 (** Constant functor: sending every arrow to the identity arrow *)
 (* ################################################################################ *)
 
-Module constant_as_Set_Functor <: Set_Functor.
+Module Type Set_module_argument.
 
-Variable U:Set.
+Parameter U:Set.
+
+End Set_module_argument.
+
+Module constant_as_Set_Functor (Import U:Set_module_argument) <: Set_Functor.
+
+Export U.
 
 Definition F_ (X:Set) := U.
 
@@ -259,3 +277,44 @@ Defined.
 
 End composition_as_Set_Functor.
 
+
+(* ################################################################################ *)
+(** Iteration *)
+(* ################################################################################ *)
+
+Module Type nat_module_argument.
+
+Parameter n:nat.
+
+End nat_module_argument.
+
+
+Module iteration_as_Set_Functor (FA:Set_Functor) (Import n:nat_module_argument) <: Set_Functor.
+
+Export n.
+
+Definition FA_:=FA.F_.
+
+Module F_theory:=Set_Functor_Iter_theory FA.
+
+Definition F_ (X:Set) := F_theory.F_iter n X.
+
+Definition lift_F_ (X Y:Set) (f:X->Y) : F_ X -> F_ Y := F_theory.lift_F_iter X Y f n.
+
+Lemma lift_F_id :forall X (fx: F_ X), fx = lift_F_ X X (fun x0 : X => x0) fx.
+Proof.
+ intros X fx; unfold lift_F_; apply F_theory.lift_F_iter_id. 
+Defined.
+
+Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
+   (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
+Proof.
+ intros X Y Z g f fx; unfold lift_F_; apply F_theory.lift_F_iter_compose.
+Defined.
+
+Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) fx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 fx = lift_F_ _ _ f1 fx.
+Proof.
+ intros X Y g f fx hyp;  unfold lift_F_; apply F_theory.lift_F_iter_extensionality; assumption.
+Defined.
+
+End iteration_as_Set_Functor.

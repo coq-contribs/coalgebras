@@ -18,12 +18,16 @@
 #
 
 # 
-# Compilation looks in the path for coqtop; set COQBIN if coqtop is not in path
-# if .ml files have to be compiled, set CAMLBIN if ocamlc is not in path
-# if .ml files have to be compiled, set CAMLP4BIN if camlp4/5 is not in path
-# 
-# set COQTOP to a Coq source directory for compiling over Coq compiled sources
-# 
+# This Makefile may take 3 arguments passed as environment variables:
+#   - COQBIN to specify the directory where Coq binaries resides;
+#   - CAMLBIN and CAMLP4BIN to give the path for the OCaml and Camlp4/5 binaries.
+COQLIB:=$(shell $(COQBIN)coqtop -where | sed -e 's/\\/\\\\/g')
+CAMLP4:="$(shell $(COQBIN)coqtop -config | awk -F = '/CAMLP4=/{print $$2}')"
+ifndef CAMLP4BIN
+  CAMLP4BIN:=$(CAMLBIN)
+endif
+
+CAMLP4LIB:=$(shell $(CAMLP4BIN)$(CAMLP4) -where)
 
 ##########################
 #                        #
@@ -31,37 +35,21 @@
 #                        #
 ##########################
 
-CAMLP4:=camlp5
-ifdef CAMLP4BIN
-  CAMLP4LIB:=$(shell $(CAMLP4BIN)/$(CAMLP4) -where 2> /dev/null)
-else
-  CAMLP4LIB:=$(shell $(CAMLP4) -where 2> /dev/null)
-endif
 OCAMLLIBS:=-I $(CAMLP4LIB) 
-COQLIB:=$(shell $(COQBIN)coqtop -where 2> /dev/null)
-ifdef COQTOP # set COQTOP for compiling from Coq sources
-  COQBIN:=$(COQTOP)/bin/
-  COQSRCLIBS:=-I $(COQTOP)/kernel -I $(COQTOP)/lib \
-  -I $(COQTOP)/library -I $(COQTOP)/parsing \
-  -I $(COQTOP)/pretyping -I $(COQTOP)/interp \
-  -I $(COQTOP)/proofs -I $(COQTOP)/tactics \
-  -I $(COQTOP)/toplevel -I $(COQTOP)/contrib/cc -I $(COQTOP)/contrib/dp \
-  -I $(COQTOP)/contrib/extraction -I $(COQTOP)/contrib/field \
-  -I $(COQTOP)/contrib/firstorder -I $(COQTOP)/contrib/fourier \
-  -I $(COQTOP)/contrib/funind -I $(COQTOP)/contrib/interface \
-  -I $(COQTOP)/contrib/micromega -I $(COQTOP)/contrib/omega \
-  -I $(COQTOP)/contrib/ring -I $(COQTOP)/contrib/romega \
-  -I $(COQTOP)/contrib/rtauto -I $(COQTOP)/contrib/setoid_ring \
-  -I $(COQTOP)/contrib/subtac -I $(COQTOP)/contrib/xml
-else ifneq ($(strip $(COQLIB)),)
-  COQSRCLIBS:=-I $(COQLIB)
-else
-  $(error Cannot find coqtop in path; set variable COQBIN to the directory where coqtop is located)
-endif
-COQLIBS:= -R . Coalgebras\
-  -R ../../Nijmegen/QArithSternBrocot QArithSternBrocot
-COQDOCLIBS:=-R . Coalgebras\
-  -R ../../Nijmegen/QArithSternBrocot QArithSternBrocot
+COQSRCLIBS:=-I $(COQLIB)/kernel -I $(COQLIB)/lib \
+  -I $(COQLIB)/library -I $(COQLIB)/parsing \
+  -I $(COQLIB)/pretyping -I $(COQLIB)/interp \
+  -I $(COQLIB)/proofs -I $(COQLIB)/tactics \
+  -I $(COQLIB)/toplevel -I $(COQLIB)/contrib/cc -I $(COQLIB)/contrib/dp \
+  -I $(COQLIB)/contrib/extraction -I $(COQLIB)/contrib/field \
+  -I $(COQLIB)/contrib/firstorder -I $(COQLIB)/contrib/fourier \
+  -I $(COQLIB)/contrib/funind -I $(COQLIB)/contrib/interface \
+  -I $(COQLIB)/contrib/micromega -I $(COQLIB)/contrib/omega \
+  -I $(COQLIB)/contrib/ring -I $(COQLIB)/contrib/romega \
+  -I $(COQLIB)/contrib/rtauto -I $(COQLIB)/contrib/setoid_ring \
+  -I $(COQLIB)/contrib/subtac -I $(COQLIB)/contrib/xml
+COQLIBS:= -R . Coalgebras
+COQDOCLIBS:=-R . Coalgebras
 
 ##########################
 #                        #
@@ -72,17 +60,21 @@ COQDOCLIBS:=-R . Coalgebras\
 ZFLAGS=$(OCAMLLIBS) $(COQSRCLIBS) -I $(CAMLP4LIB)
 OPT:=
 COQFLAGS:=-q $(OPT) $(COQLIBS) $(OTHERFLAGS) $(COQ_XML)
+ifdef CAMLBIN
+  COQMKTOPFLAGS:=-camlbin $(CAMLBIN) -camlp4bin $(CAMLP4BIN)
+endif
 COQC:=$(COQBIN)coqc
 COQDEP:=$(COQBIN)coqdep -c
 GALLINA:=$(COQBIN)gallina
 COQDOC:=$(COQBIN)coqdoc
-CAMLC:=$(CAMLBIN)ocamlc.opt -rectypes -c
-CAMLOPTC:=$(CAMLBIN)ocamlopt.opt -rectypes -c
+COQMKTOP:=$(COQBIN)coqmktop
+CAMLC:=$(CAMLBIN)ocamlc.opt -rectypes
+CAMLOPTC:=$(CAMLBIN)ocamlopt.opt -rectypes
 CAMLLINK:=$(CAMLBIN)ocamlc.opt -rectypes
 CAMLOPTLINK:=$(CAMLBIN)ocamlopt.opt -rectypes
 GRAMMARS:=grammar.cma
 CAMLP4EXTEND:=pa_extend.cmo pa_macro.cmo q_MLast.cmo
-CAMLP4OPTIONS=
+CAMLP4OPTIONS:=
 PP:=-pp "$(CAMLP4BIN)$(CAMLP4)o -I . $(COQSRCLIBS) $(CAMLP4EXTEND) $(GRAMMARS) $(CAMLP4OPTIONS) -impl"
 
 ###################################
@@ -123,6 +115,12 @@ all.ps: $(VFILES)
 
 all-gal.ps: $(VFILES)
 	$(COQDOC) -toc -ps -g $(COQDOCLIBS) -o $@ `$(COQDEP) -sort -suffix .v $(VFILES)`
+
+all.pdf: $(VFILES)
+	$(COQDOC) -toc -pdf $(COQDOCLIBS) -o $@ `$(COQDEP) -sort -suffix .v $(VFILES)`
+
+all-gal.pdf: $(VFILES)
+	$(COQDOC) -toc -pdf -g $(COQDOCLIBS) -o $@ `$(COQDEP) -sort -suffix .v $(VFILES)`
 
 
 
@@ -165,21 +163,28 @@ opt:
 	$(MAKE) all "OPT:=-opt"
 
 install:
-	mkdir -p `$(COQC) -where`/user-contrib
-	cp -f $(VOFILES) `$(COQC) -where`/user-contrib
-
-Makefile: Make
-	mv -f Makefile Makefile.bak
-	$(COQBIN)coq_makefile -f Make -o Makefile
-
+	mkdir -p $(COQLIB)/user-contrib
+	(for i in $(VOFILES); do \
+	 install -D $$i $(COQLIB)/user-contrib/Coalgebras/$$i; \
+	 done)
 
 clean:
-	rm -f *.cmo *.cmi *.cmx *.o $(VOFILES) $(VIFILES) $(GFILES) *~
-	rm -f all.ps all-gal.ps all.glob $(VFILES:.v=.glob) $(HTMLFILES) $(GHTMLFILES) $(VFILES:.v=.tex) $(VFILES:.v=.g.tex) $(VFILES:.v=.v.d)
+	rm -f $(VOFILES) $(VIFILES) $(GFILES) *~
+	rm -f all.ps all-gal.ps all.pdf all-gal.pdf all.glob $(VFILES:.v=.glob) $(HTMLFILES) $(GHTMLFILES) $(VFILES:.v=.tex) $(VFILES:.v=.g.tex) $(VFILES:.v=.v.d)
 	- rm -rf html
 
 archclean:
 	rm -f *.cmx *.o
+
+
+printenv: 
+	@echo CAMLC =	$(CAMLC)
+	@echo CAMLOPTC =	$(CAMLOPTC)
+	@echo CAMLP4LIB =	$(CAMLP4LIB)
+
+Makefile: Make
+	mv -f Makefile Makefile.bak
+	$(COQBIN)coq_makefile -f Make -o Makefile
 
 
 -include $(VFILES:.v=.v.d)

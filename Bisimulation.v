@@ -3,7 +3,7 @@
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
-(*                  <http://www.gnu.org/licenses/lgpl.txt>              *)
+(*                  <http://www.gnu.org/licenses/lgpl-3.0.html>         *)
 (************************************************************************)
 
 Require Export ExtensionalFunctor.
@@ -166,16 +166,6 @@ Proof.
  ]; trivial.
 Defined.
 
-Definition relation_carrier S1 S2 (R:S1.(states)->S2.(states)->Prop):=
-       {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)} .
-
-Definition compose_relation S1 S2 S3 (R12:S1.(states)->S2.(states)->Prop) 
-                                     (R23:S2.(states)->S3.(states)->Prop) x z:Prop :=
-                                         exists y, R12 x y/\ R23 y z.
-
-Definition compose_carrier_strong (S1 S2 S3:F_coalgebra) R12 R23:=
-       {s1s3 : S1.(states) * S3.(states) & {s2:S2.(states)  | R12 (fst s1s3) s2 /\ R23 s2 (snd s1s3)}}.
-
 Definition weak_pullback_Rel (S1 S2 S3:F_coalgebra) R12 R23 :=
            let RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)} in 
            let RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)} in
@@ -232,7 +222,7 @@ Proof.
 Defined.
 
 
-Definition pre_bisim_pulback_structure (S1 S2 S3:F_coalgebra) R12 R23: 
+Definition pre_bisim_pullback_structure (S1 S2 S3:F_coalgebra) R12 R23: 
                              is_F_bisimulation _ _ R12 -> is_F_bisimulation _ _ R23 ->
                      weak_pullback_Rel S1 S2 S3 R12 R23 -> 
            let RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)} in 
@@ -252,24 +242,24 @@ Proof.
 Defined.
 
 
-Lemma pre_bisim_pulback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
+Lemma pre_bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp1 (fst (projT1 x)) = fst (projT1 (pre_bisim_pulback_structure _ _ _ _ _ hyp1 hyp2 x)).
+     projT1 hyp1 (fst (projT1 x)) = fst (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
  intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2] [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
 Defined.
 
-Lemma pre_bisim_pulback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
+Lemma pre_bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp2 (snd (projT1 x)) = snd (projT1 (pre_bisim_pulback_structure _ _ _ _ _ hyp1 hyp2 x)).
+     projT1 hyp2 (snd (projT1 x)) = snd (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
  intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2] [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
 Defined.
 
 
-Definition bisim_pulback_structure (S1 S2 S3:F_coalgebra) R12 R23
+Definition bisim_pullback_structure (S1 S2 S3:F_coalgebra) R12 R23
          (hyp1 : is_F_bisimulation S1 S2 R12)
          (hyp2 : is_F_bisimulation S2 S3 R23)
          (x : weak_pullback_Rel S1 S2 S3 R12 R23) :=
@@ -278,39 +268,39 @@ Definition bisim_pulback_structure (S1 S2 S3:F_coalgebra) R12 R23
           let RS23 := {s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)} in
           let r2 := fun r : RS12 => snd (proj1_sig r) in
           let r3 := fun r : RS23 => fst (proj1_sig r) in
-          pre_bisim_pulback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x).
+          pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x).
 
-Definition bisim_pulback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
+Definition bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
      projT1 hyp1 (fst (projT1 x)) = 
-     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(fst (projT1 x0))) (bisim_pulback_structure _ _ _ _ _ hyp1 hyp2 x).
+     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(fst (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
  intros S1 S2 S3 R12 R23 hyp1 hyp2 x.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
  set (r3:=fun r:RS23 => (fst (proj1_sig r))).
- unfold bisim_pulback_structure.
- destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pulback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [rwt_tmp _].
- stepr (fst (projT1 (pre_bisim_pulback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
- rewrite <- (pre_bisim_pulback_structure_prop1 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
+ unfold bisim_pullback_structure.
+ destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [rwt_tmp _].
+ stepr (fst (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
+ rewrite <- (pre_bisim_pullback_structure_prop1 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
 Defined.
 
-Definition bisim_pulback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
+Definition bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
      projT1 hyp2 (snd (projT1 x)) = 
-     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(snd (projT1 x0))) (bisim_pulback_structure _ _ _ _ _ hyp1 hyp2 x).
+     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(snd (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
  intros S1 S2 S3 R12 R23 hyp1 hyp2 x.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
  set (r3:=fun r:RS23 => (fst (proj1_sig r))).
- unfold bisim_pulback_structure.
- destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pulback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [_ rwt_tmp].
- stepr (snd (projT1 (pre_bisim_pulback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
- rewrite <- (pre_bisim_pulback_structure_prop2 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
+ unfold bisim_pullback_structure.
+ destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [_ rwt_tmp].
+ stepr (snd (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
+ rewrite <- (pre_bisim_pullback_structure_prop2 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
 Defined.
 
@@ -338,7 +328,7 @@ Proof.
  set (R12_o_R23:={s1s3 : S1.(states) * S3.(states) & {s2  | R12 (fst s1s3) s2 /\ R23 s2 (snd s1s3)}}).
  set (i:=fun s1s3h:R12_o_R23 => i_comp_pullback S1 S2 S3 R12 R23 s1s3h).
  set (j:=fun xyyz:X => j_comp_pullback S1 S2 S3 R12 R23 xyyz).
- set (alpha_X:=fun xyyz:X => bisim_pulback_structure _ _ _ _ _ R12_is_bisim R23_is_bisim xyyz).
+ set (alpha_X:=fun xyyz:X => bisim_pullback_structure _ _ _ _ _ R12_is_bisim R23_is_bisim xyyz).
  set (Fj__alpha_X__i:=fun s1s3h:R12_o_R23 => lift_F_ _ _ j (alpha_X (i s1s3h))).
  exists Fj__alpha_X__i.
  intros s1s3_h.
@@ -358,7 +348,7 @@ Proof.
    unfold r1 at 2; rewrite <- hyp121.
    assert (alpha_X_coalg:forall x,  lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ 
                                      (fun x0=> fst (projT1 x0)) (alpha_X x) = gamma1 (fst (projT1 x)));
-    [ clear; intros x; unfold alpha_X; rewrite <- bisim_pulback_structure_prop1; reflexivity|].
+    [ clear; intros x; unfold alpha_X; rewrite <- bisim_pullback_structure_prop1; reflexivity|].
    rewrite alpha_X_coalg; reflexivity.
   rewrite <- square2. 
   unfold Fj__alpha_X__i.
@@ -380,7 +370,7 @@ Proof.
    unfold r4 at 2; rewrite <- hyp232.
    assert (alpha_X_coalg':forall x,  lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ 
                                      (fun x0=> snd (projT1 x0)) (alpha_X x) = gamma2 (snd (projT1 x)));
-    [ clear; intros x; unfold alpha_X; rewrite <- bisim_pulback_structure_prop2; reflexivity|].
+    [ clear; intros x; unfold alpha_X; rewrite <- bisim_pullback_structure_prop2; reflexivity|].
    rewrite alpha_X_coalg'; reflexivity.
   rewrite <- square2'. 
   unfold Fj__alpha_X__i.

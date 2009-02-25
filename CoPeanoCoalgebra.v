@@ -3,7 +3,7 @@
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
-(*                  <http://www.gnu.org/licenses/lgpl.txt>              *)
+(*                  <http://www.gnu.org/licenses/lgpl-3.0.html>         *)
 (************************************************************************)
 
 Require Import WeaklyFinalCoalgebra.

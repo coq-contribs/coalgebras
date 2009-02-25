@@ -3,7 +3,7 @@
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
-(*                  <http://www.gnu.org/licenses/lgpl.txt>              *)
+(*                  <http://www.gnu.org/licenses/lgpl-3.0.html>         *)
 (************************************************************************)
 
 Require Coq.ZArith.BinInt.
@@ -191,6 +191,16 @@ Proof.
  simpl.
  change (snd (b0, f x) = snd (b1, g y)).
  rewrite h; reflexivity.
+Defined.
+
+Definition wkpk_id_lft: forall (X Y Z:Set) (f:X->Z) (g:Y->Z), 
+ F_ (weak_pullback _ _ _ f g) -> weak_pullback _ _ _ (lift_F_ _ _ f) (lift_F_ _ _ g).
+Proof.
+ intros X Y Z f g [b [[x y] h]].
+ simpl in h.
+ exists ((b,x),(b,y)).
+ simpl.
+ rewrite h; trivial.
 Defined.
 
 Lemma F_pres_weak_pullback_arr: forall (X Y Z:Set) (f:X->Z) (g:Y->Z) 
