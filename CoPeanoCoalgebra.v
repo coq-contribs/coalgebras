@@ -267,10 +267,9 @@ Proof.
  exists (maximal_bisimulation_conat_pred S1 S2).
  intros [[x y] [hyp1 hyp2|s1' s2' hyp1 hyp2 hypR]].
  unfold lift_F_; split;
- rewrite (maximal_bisimulation_conat_pred_property1 _ _ tt x y (max_bisim_conat_O S1 S2 (fst (x, y)) (snd (x, y)) hyp1 hyp2) hyp1). 
+ rewrite (maximal_bisimulation_conat_pred_property1 _ _ tt x y (max_bisim_conat_O S1 S2 (fst (x, y)) (snd (x, y)) hyp1 hyp2) hyp1); simpl.
   rewrite <- hyp1; reflexivity.
   rewrite <- hyp2; reflexivity.
-
   unfold lift_F_; split;
    destruct (maximal_bisimulation_conat_pred_property2 _ _ x y (max_bisim_conat_S _ _ (fst (x, y)) (snd (x, y)) s1' s2' hyp1 hyp2 hypR) s1' s2' hypR hyp1 hyp2) 
            as [hyp'' hyp''_prop];
