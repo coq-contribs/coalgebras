@@ -60,7 +60,7 @@ Defined.
 Let lift_T_star_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) hx: 
    (fun hx0 => lift_T_star_ Y Z f (lift_T_star_ X Y g hx0)) hx = lift_T_star_ X Z (fun x => f (g x)) hx.
 Proof.
- intros X Y Z g f [j x0]; simpl; rewrite lift_T_iter_compose; trivial.
+ destruct hx as [j x0]; simpl; rewrite lift_T_iter_compose; trivial.
 Defined.
 
 Let lift_T_star_extensionality: forall (X Y:Set) (f0 f1:X->Y) hx, (forall x, f0 x = f1 x) -> lift_T_star_  _ _ f0 hx = lift_T_star_ _ _ f1 hx.
@@ -361,7 +361,7 @@ Lemma commutativity_Lam_coiterator_rel_image_lifting (Lambda:T_over_B_distributi
 rel_image_lift_B_ w w bisimilar (w.(transition) (Lam_coiterator Lambda BS x))
          ( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- intros Lambda [X X_tr] x.
+ destruct BS as [X X_tr].
  unfold Lam_coiterator.
  rewrite (commutativity_F_unfold
 (Build_F_coalgebra (T_star_ X)
