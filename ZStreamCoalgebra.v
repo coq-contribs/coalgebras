@@ -63,7 +63,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) bx: 
    (fun bx0 => lift_F_ Y Z f (lift_F_ X Y g bx0)) bx = lift_F_ X Z (fun x => f (g x)) bx.
 Proof.
- intros X Y Z g f [b0 x0]; trivial.
+ destruct bx as [b0 x0]; trivial.
 Defined.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) bx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 bx = lift_F_ _ _ f1 bx.
@@ -247,7 +247,7 @@ Defined.
 Lemma commutativity_Str_unfold  (S0: F_coalgebra) (x:S0.(states)) : 
        Str.(transition) (Str_unfold S0 x) = (lift_F_ _ _ (Str_unfold S0)) (S0.(transition) x).
 Proof.
- intros [s0 s0_tr] x.
+ destruct S0 as [s0 s0_tr].
  rewrite Str_unfold_unfolded; simpl.
  set (s0_tr_x:=s0_tr x). 
  destruct s0_tr_x as (b,tr); trivial.

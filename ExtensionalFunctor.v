@@ -43,7 +43,7 @@ Fixpoint lift_F_iter (X Y:Set) (f:X->Y) j  {struct j} : F_iter j X -> F_iter j Y
 
 Lemma F_iter_S (X:Set) (j:nat): F_ (F_iter j X)= F_iter (S j) X.
 Proof. 
- intros X j; revert X; induction j.
+ revert X; induction j.
   reflexivity.
   intros X; simpl; rewrite IHj; reflexivity.
 Defined.
@@ -62,7 +62,7 @@ Defined.
 Lemma lift_F_iter_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) j s_ix:
  lift_F_iter Y Z f j (lift_F_iter X Y g j s_ix) = lift_F_iter X Z (fun x => f (g x)) j s_ix.
 Proof.
- intros X Y Z g f j; revert X Y Z g f.
+ revert X Y Z g f s_ix.
  induction j; intros X Y Z g f s_ix. 
   simpl; trivial.
   simpl.
@@ -73,7 +73,7 @@ Defined.
 
 Lemma lift_F_iter_id (X:Set) j (fx:F_iter j X): fx = lift_F_iter X X (fun x0 : X => x0) j fx.
 Proof.
- intros X j fx; revert X fx.
+ revert X fx.
  induction j; intros X fx. 
   simpl; trivial.
   simpl in *.
@@ -114,7 +114,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f u; unfold lift_F_; reflexivity.
+ unfold lift_F_; reflexivity.
 Defined.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) fx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 fx = lift_F_ _ _ f1 fx.
@@ -143,7 +143,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f u; unfold lift_F_; reflexivity.
+ unfold lift_F_; reflexivity.
 Defined.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) fx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 fx = lift_F_ _ _ f1 fx.
@@ -181,7 +181,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f [fa|fb]; unfold lift_F_;
+ destruct fx as [fa|fb]; unfold lift_F_;
  [ rewrite FA.lift_F_compose | rewrite FB.lift_F_compose] ; reflexivity.
 Defined.
 
@@ -216,7 +216,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f [fa fb]; unfold lift_F_;
+ destruct fx as [fa fb]; unfold lift_F_;
  rewrite FA.lift_F_compose; rewrite FB.lift_F_compose; reflexivity.
 Defined.
 
@@ -258,7 +258,6 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f fx. 
  unfold lift_F_.
  rewrite FA.lift_F_compose.
  apply FA.lift_F_extensionality.
@@ -309,7 +308,7 @@ Defined.
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) fx: 
    (fun fx0 => lift_F_ Y Z f (lift_F_ X Y g fx0)) fx = lift_F_ X Z (fun x => f (g x)) fx.
 Proof.
- intros X Y Z g f fx; unfold lift_F_; apply F_theory.lift_F_iter_compose.
+ unfold lift_F_; apply F_theory.lift_F_iter_compose.
 Defined.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) fx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 fx = lift_F_ _ _ f1 fx.

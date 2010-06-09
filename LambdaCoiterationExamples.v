@@ -53,7 +53,6 @@ Lemma commutativity_Conv_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgebr
  snd (Str.(transition) (Lam_coiterator Lambda BS x)) (=) 
  snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- intros Lambda BS x.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
 Defined.
@@ -63,6 +62,7 @@ Lemma commutativity_Conv_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroi
  hd (Lam_coiterator Lambda BS x) = fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))) /\
  tl (Lam_coiterator Lambda BS x) (=) snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
+ revert Lambda BS x.
  apply commutativity_Conv_fst_snd.
 Defined.
 
@@ -70,7 +70,6 @@ Lemma commutativity_Conv_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
                            (snd (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x)))).
 Proof.
- intros Lambda BS x.
  rewrite (hd_tl_id (Lam_coiterator Lambda BS x)).
  destruct (commutativity_Conv_hd_tl Lambda BS x) as [hyp_hd hyp_tl].
  constructor.
@@ -86,7 +85,6 @@ Lemma commutativity_Conv_Cons_2 (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (fun s0=>Beta Lambda (lift_T_ _ _ (Lam_coiterator Lambda BS) s0)) (BS.(bs_transition) x)))
                            (snd (lift_B_ _ _ (fun s0 => Beta Lambda (lift_T_ _ _ (Lam_coiterator Lambda BS) s0)) (BS.(bs_transition) x))).
 Proof.
- intros Lambda BS x.
  rewrite <- lift_B_compose with (Y:=T_ (Str.(states))).
  apply commutativity_Conv_Cons_1.
 Defined.
@@ -285,7 +283,6 @@ Lemma commutativity_map_S_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgeb
  snd (Str.(transition) (Lam_coiterator Lambda BS x)) (=) 
  snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- intros Lambda BS x.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
 Defined.
@@ -295,14 +292,13 @@ Lemma commutativity_map_S_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  hd (Lam_coiterator Lambda BS x) = fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))) /\
  tl (Lam_coiterator Lambda BS x) (=) snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- apply commutativity_map_S_fst_snd.
+ apply (commutativity_map_S_fst_snd Lambda BS x).
 Defined.
 
 Lemma commutativity_map_S_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
                            (snd (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x)))).
 Proof.
- intros Lambda BS x.
  rewrite (hd_tl_id (Lam_coiterator Lambda BS x)).
  destruct (commutativity_map_S_hd_tl Lambda BS x) as [hyp_hd hyp_tl].
  constructor.
@@ -384,7 +380,6 @@ Lemma commutativity_Fib_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  snd (Str.(transition) (Lam_coiterator Lambda BS x)) (=) 
  snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- intros Lambda BS x.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
 Defined.
@@ -394,14 +389,13 @@ Lemma commutativity_Fib_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroid
  hd (Lam_coiterator Lambda BS x) = fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))) /\
  tl (Lam_coiterator Lambda BS x) (=) snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
- apply commutativity_Fib_fst_snd.
+ apply (commutativity_Fib_fst_snd Lambda BS x).
 Defined.
 
 Lemma commutativity_Fib_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
                            (snd (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x)))).
 Proof.
- intros Lambda BS x.
  rewrite (hd_tl_id (Lam_coiterator Lambda BS x)).
  destruct (commutativity_Fib_hd_tl Lambda BS x) as [hyp_hd hyp_tl].
  constructor.
@@ -478,20 +472,18 @@ different ways. *)
 
 Section using_cofix.
 
-Lemma pointwise_plus_pointwise_plus_tl x xs ys: pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
+CoFixpoint pointwise_plus_pointwise_plus_tl x xs ys: pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
 Proof.
- cofix.
- intros x [x0 xs] [y0 ys].
+ destruct xs as [x0 xs], ys as [y0 ys].
  rewrite (pointwise_plus_tl_cofixed x (Cons x0 xs) (Cons y0 ys)).
  rewrite pointwise_plus_cofixed.
  constructor; trivial.
   apply (pointwise_plus_pointwise_plus_tl x0 xs ys).
 Defined.
 
-Lemma pointwise_plus_comm xs ys: pointwise_plus xs ys (=) pointwise_plus ys xs.
+CoFixpoint pointwise_plus_comm xs ys: pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
- cofix.
- intros [x0 xs] [y0 ys].
+ destruct xs as [x0 xs], ys as [y0 ys].
  rewrite pointwise_plus_cofixed.
  replace (pointwise_plus (Cons y0 ys) (Cons x0 xs)) with (Cons (y0 + x0) (pointwise_plus ys xs)); [|symmetry ; apply pointwise_plus_cofixed].
  constructor; simpl.
@@ -529,7 +521,6 @@ Defined.
 
 Lemma pointwise_plus_pointwise_plus_tl_2 x xs ys: pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
 Proof.
- intros x xs ys.
  destruct (maximal_bisimulation_is_maximal w w) as [_ hyp].
  set (R':=fun alpha beta => exists x, exists xs, exists ys, alpha = pointwise_plus_tl x xs ys /\ beta = pointwise_plus (Cons x xs) ys).  
  apply (hyp R').
@@ -557,7 +548,6 @@ Defined.
 
 Lemma pointwise_plus_comm_2 xs ys: pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
- intros xs ys.
  destruct (maximal_bisimulation_is_maximal w w) as [_ hyp].
  set (R':=fun alpha beta => exists xs, exists ys, alpha = pointwise_plus xs ys /\ beta = pointwise_plus ys xs).  
  apply (hyp R').

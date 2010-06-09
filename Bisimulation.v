@@ -104,7 +104,7 @@ Definition relation_lift_B_:=MB.rel_image_lift_F_.
 
 Lemma is_F_bisimulation_is_F_bisimulation_strong (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop): is_F_bisimulation _ _ R -> is_F_bisimulation_strong _ _ R.
 Proof.
- intros S1 S2 R  [gamma hyp].
+ intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
  set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12_).
@@ -122,7 +122,7 @@ Defined.
 
 Lemma is_F_bisimulation_strong_Prop_is_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop): is_F_bisimulation_strong _ _ R -> is_F_bisimulation _ _ R.
 Proof.
- intros S1 S2 R  [gamma hyp].
+ intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
  set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12_).
@@ -140,7 +140,6 @@ Defined.
 
 Lemma delta_is_F_bisimulation (S1:F_coalgebra) :is_F_bisimulation _ _ (@eq S1.(states)).
 Proof.
- intros S1.
  unfold is_F_bisimulation.
  exists (fun s1s2_h=>lift_F_ _ _ (fun (s:S1.(states))=>exist (fun z => (fst z = snd z)) (s,s) (refl_equal s)) (S1.(transition) (fst (proj1_sig s1s2_h)))).
  intros [[s1 s2] hyp]; split; simpl; simpl in hyp;
@@ -150,7 +149,7 @@ Defined.
 
 Lemma inv_is_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop): is_F_bisimulation _ _ R -> is_F_bisimulation _ _ (fun x=>(fun y=>R y x)).
 Proof.
- intros S1 S2 R  [gamma gamma_prop].
+ intros [gamma gamma_prop].
  set (RS21:={s2s1 : states S2 * states S1 | R (snd s2s1) (fst s2s1)}).
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (i:=fun s1s2h:RS12=>(exist (fun z=>R (snd z) (fst z)) (snd (proj1_sig s1s2h),fst (proj1_sig s1s2h)) (proj2_sig s1s2h))).
@@ -177,7 +176,7 @@ Let i_comp_pullback (S1 S2 S3:F_coalgebra) R12 R23 :
     {s1s3 : S1.(states) * S3.(states) & {s2:S2.(states)  | R12 (fst s1s3) s2 /\ R23 s2 (snd s1s3)}}->
                                weak_pullback_Rel _ _ _ R12 R23.
 Proof.
- intros S1 S2 S3 R12 R23 [[s1 s3] [s2 [hyp12 hyp23]]];  unfold weak_pullback_Rel.
+ intros [[s1 s3] [s2 [hyp12 hyp23]]];  unfold weak_pullback_Rel.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
@@ -190,7 +189,7 @@ Defined.
 Let j_comp_pullback (S1 S2 S3:F_coalgebra) R12 R23 : weak_pullback_Rel _ _ _ R12 R23->
       {s1s3 : S1.(states) * S3.(states) & {s2:S2.(states)  | R12 (fst s1s3) s2 /\ R23 s2 (snd s1s3)}}. 
 Proof.
- intros S1 S2 S3 R12 R23 [[[[s1 s2] hyp12] [[s2' s3] hyp23]] hyp].
+ intros [[[[s1 s2] hyp12] [[s2' s3] hyp23]] hyp].
  simpl in  hyp, hyp23, hyp12.
  exists (s1,s3); exists s2; simpl; subst s2'; split; assumption.
 Defined.
@@ -231,7 +230,7 @@ Definition pre_bisim_pullback_structure (S1 S2 S3:F_coalgebra) R12 R23:
            let r3:=fun r:RS23 => (fst (proj1_sig r)) in
             weak_pullback _ _ _  (lift_F_ _ _ r2) (lift_F_ _ _ r3).
 Proof.
- intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2] [[a12 a23] hyp] RS12 RS23 r2 r3.
+ intros [gamma1 hyp1] [gamma2 hyp2] [[a12 a23] hyp] RS12 RS23 r2 r3.
  exists (gamma1 a12, gamma2 a23).
  simpl.
  destruct (hyp1 a12) as [_ hyp12].
@@ -246,7 +245,7 @@ Lemma pre_bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
      projT1 hyp1 (fst (projT1 x)) = fst (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
- intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2] [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
+ destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
 Defined.
 
@@ -254,7 +253,7 @@ Lemma pre_bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
      projT1 hyp2 (snd (projT1 x)) = snd (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
- intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2] [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
+ destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
 Defined.
 
@@ -275,7 +274,6 @@ Definition bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
      projT1 hyp1 (fst (projT1 x)) = 
      lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(fst (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
- intros S1 S2 S3 R12 R23 hyp1 hyp2 x.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
@@ -292,7 +290,6 @@ Definition bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
      projT1 hyp2 (snd (projT1 x)) = 
      lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(snd (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
- intros S1 S2 S3 R12 R23 hyp1 hyp2 x.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
@@ -309,7 +306,7 @@ Lemma comp_is_F_bisimulation_str (S1 S2 S3:F_coalgebra) (R12:S1.(states)->S2.(st
   is_F_bisimulation _ _ R12 -> is_F_bisimulation _ _ R23 -> 
        is_F_bisimulation_strong _ _ (fun x=>(fun z=>{y |  R12 x y/\ R23 y z})).
 Proof.
- intros S1 S2 S3 R12 R23 [gamma1 hyp1] [gamma2 hyp2].
+ intros [gamma1 hyp1] [gamma2 hyp2].
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
  set (r2:=fun r:RS12 => (snd (proj1_sig r))).
