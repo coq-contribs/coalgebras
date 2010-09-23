@@ -1,7 +1,9 @@
 -R . Coalgebras
+AxiomaticLambdaBisimulationExample.v
 Bisimulation.v
 CoPeanoCoalgebra.v
 ExtensionalFunctor.v
+IntensionalLambdaBisimulation.v
 LambdaCoiterationExamples.v
 LambdaCoiteration.v
 WeaklyFinalCoalgebra.v

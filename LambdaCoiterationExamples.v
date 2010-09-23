@@ -1,5 +1,5 @@
 (************************************************************************)
-(* Copyright 2008 Milad Niqui                                           *)
+(* Copyright 2008-2010 Milad Niqui                                      *)
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
@@ -9,7 +9,7 @@
 (** Some examples illustrating the use of lambda-coiteration scheme.
 *)
 
-Require Import LambdaCoiteration.
+Require Import IntensionalLambdaBisimulation.
 Require Import ZStreamCoalgebra.
 
 (* Some useful fucntors. *)
@@ -45,7 +45,7 @@ Module B_map_S_Functor := product_as_Set_Functor B_arr_B_constant_as_Set_Functor
 (* Some examples *)
 (*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*)
 
-Module Import Streams_Conv_LamCoiter := Lambda_Coiteration_theory Streams_as_Weakly_Final_Coalgebra Pairing_Functor.
+Module Import Streams_Conv_LamCoiter := Lambda_Bisimulation_theory Streams_as_Weakly_Final_Coalgebra Pairing_Functor.
 
 Lemma commutativity_Conv_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  fst (Str.(transition) (Lam_coiterator Lambda BS x)) =
@@ -343,7 +343,6 @@ Definition nats:=Lam_coiterator Lambda_map_S coalgebra_map_S tt.
 (*
 Time Eval vm_compute in (take 10 nats).
 *)
-(* Finished transaction in 16. secs (15.52097u,0.048003s) *)
 
 
 Definition map_ g xs := Beta Lambda_map_S (g,xs).
@@ -443,7 +442,6 @@ Definition pointwise_plus_tl x xs ys := Beta Lambda_fibonacci (x,(xs,ys)).
 (*
 Time Eval vm_compute in (take 20 fib).
 *)
-(* Finished transaction in 16. secs (15.52097u,0.048003s) *)
 
 Lemma pointwise_plus_tl_cofixed :forall x xs ys, pointwise_plus_tl x xs ys = 
                                Cons (x+(hd ys)) (pointwise_plus_tl (hd xs) (tl xs) (tl ys)).
@@ -467,13 +465,13 @@ Defined.
 
 Section fib_satisfies_other_equation.  
 
-(* Proving an alternative bisimilarity equation for fib in two
-different ways. *)
+(* Proving an alternative bisimilarity for fib in two different ways. *)
 
 Section using_cofix.
 
-CoFixpoint pointwise_plus_pointwise_plus_tl x xs ys: pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
+Lemma pointwise_plus_pointwise_plus_tl :forall x xs ys, pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
 Proof.
+ cofix.
  destruct xs as [x0 xs], ys as [y0 ys].
  rewrite (pointwise_plus_tl_cofixed x (Cons x0 xs) (Cons y0 ys)).
  rewrite pointwise_plus_cofixed.
@@ -481,8 +479,9 @@ Proof.
   apply (pointwise_plus_pointwise_plus_tl x0 xs ys).
 Defined.
 
-CoFixpoint pointwise_plus_comm xs ys: pointwise_plus xs ys (=) pointwise_plus ys xs.
+Lemma pointwise_plus_comm :forall xs ys, pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
+ cofix.
  destruct xs as [x0 xs], ys as [y0 ys].
  rewrite pointwise_plus_cofixed.
  replace (pointwise_plus (Cons y0 ys) (Cons x0 xs)) with (Cons (y0 + x0) (pointwise_plus ys xs)); [|symmetry ; apply pointwise_plus_cofixed].
@@ -519,8 +518,9 @@ Proof.
    refine (hd s1,_); exists (tl s1,tl s2); assumption.
 Defined.
 
-Lemma pointwise_plus_pointwise_plus_tl_2 x xs ys: pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
+Lemma pointwise_plus_pointwise_plus_tl_2 :forall x xs ys, pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
 Proof.
+ intros x xs ys.
  destruct (maximal_bisimulation_is_maximal w w) as [_ hyp].
  set (R':=fun alpha beta => exists x, exists xs, exists ys, alpha = pointwise_plus_tl x xs ys /\ beta = pointwise_plus (Cons x xs) ys).  
  apply (hyp R').
@@ -546,8 +546,9 @@ Proof.
    refine (hd s1,_); exists (tl s1,tl s2); assumption.
 Defined.
 
-Lemma pointwise_plus_comm_2 xs ys: pointwise_plus xs ys (=) pointwise_plus ys xs.
+Lemma pointwise_plus_comm_2 :forall xs ys, pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
+ intros xs ys.
  destruct (maximal_bisimulation_is_maximal w w) as [_ hyp].
  set (R':=fun alpha beta => exists xs, exists ys, alpha = pointwise_plus xs ys /\ beta = pointwise_plus ys xs).  
  apply (hyp R').
@@ -573,3 +574,79 @@ End without_cofix.
 End fib_satisfies_other_equation.
 
 End Example_fibonacci.
+
+
+
+Module Import primitive_corecursion_Zstreams:= Primitive_Corecursion Streams_as_Weakly_Final_Coalgebra.
+
+Import Corecursion_LamCoiter.
+
+Lemma commutativity_Primitive_Corecursion_fst_snd (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
+ fst (Str.(transition) (Corecursor BT x)) =
+ fst (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)) /\
+ snd (Str.(transition) (Corecursor BT x)) (=) 
+ snd (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)).
+Proof.
+ apply -> rel_image_lift_F_Str_bisimilar_spelled.
+ apply commutativity_Corecursor_rel_image_lifting.
+Defined.
+
+Lemma commutativity_Primitive_Corecursion_hd_tl (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
+ hd (Corecursor BT x) =
+ fst (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)) /\
+ tl (Corecursor BT x) (=) 
+ snd (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)).
+Proof.
+ apply (commutativity_Primitive_Corecursion_fst_snd BT x).
+Defined.
+
+Lemma commutativity_Primitive_Corecursion_Cons (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
+ Corecursor BT x (=) Cons (fst (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)))
+                          (snd (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x))).
+Proof.
+ rewrite (hd_tl_id (Corecursor BT x)).
+ destruct (commutativity_Primitive_Corecursion_hd_tl BT x) as [hyp_hd hyp_tl].
+ constructor.
+  rewrite hyp_hd; reflexivity.
+  unfold tl at 1.
+  match goal with 
+  | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2; trivial
+  end.
+  apply refl_bisimilar. 
+Defined.
+
+Section primitive_corecursion_example.
+
+Section insert.
+
+Definition coalgebra_insert: BT_coalgebroid := 
+    (Build_BT_coalgebroid (B*B_pow_inf)
+         (fun  pivot_xs: B * B_pow_inf =>
+          match pivot_xs with
+          | (pivot, Cons x0 xs' as xs) =>
+              if Z_le_dec x0 pivot
+              then (x0, il (B * Stream B) (pivot, xs'))
+              else (pivot, ir (B * B_pow_inf) xs)
+          end)).
+
+
+Definition insert x ys:=Corecursor coalgebra_insert (x,ys).
+
+Lemma insert_cofixed :forall x ys, insert x ys (=) 
+                      if Z_le_dec (hd ys) x
+                      then Cons (hd ys) (insert x (tl ys)) 
+                      else Cons x ys.
+Proof.
+ intros x ys;
+ assert (hyp_bis:=commutativity_Primitive_Corecursion_Cons coalgebra_insert (x,ys));
+ match goal with 
+ | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2
+ end; 
+ [ assumption
+ | destruct ys as [y ys']; simpl; destruct (Z_le_dec y x); apply refl_bisimilar 
+ ].
+Qed. 
+
+End insert.
+
+End primitive_corecursion_example.

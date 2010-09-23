@@ -1,5 +1,5 @@
 (************************************************************************)
-(* Copyright 2008 Milad Niqui                                           *)
+(* Copyright 2008-2010 Milad Niqui                                      *)
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
@@ -23,16 +23,20 @@ Module Lambda_Coiteration_theory (MB:Weakly_Final_Coalgebra) (MT:Set_Functor).
 Import MB MT.
 Export MB MT.
 
-Module MB_Coalgebra_Theory := Set_Coalgebra_theory MB.
+Module MB_Weakly_Final_Coalgebra_Theory := Weakly_Final_Coalgebra_theory MB.
 
 Definition B_:=MB.F_.
 Definition lift_B_id:=MB.lift_F_id.
 Definition lift_B_compose:=MB.lift_F_compose.
 Definition lift_B_:=MB.lift_F_.
 Definition lift_B_extensionality:=MB.lift_F_extensionality.
-Definition B_coalgebra_compose:=MB_Coalgebra_Theory.F_coalgebra_compose.
+Definition B_coalgebra_compose:=MB_Weakly_Final_Coalgebra_Theory.F_coalgebra_compose.
 Definition rel_image_lift_B_:=MB.rel_image_lift_F_.
 Definition lift_B_extensionality_bisim:=MB.lift_F_extensionality_bisim.
+Definition image_span_is_F_bisimulation_strong:=MB_Weakly_Final_Coalgebra_Theory.image_span_is_F_bisimulation_strong.
+Definition B_unfold_morphism:=MB_Weakly_Final_Coalgebra_Theory.F_unfold_morphism.
+Definition B_coalgebra:=MB.F_coalgebra.
+
 
 Module MT_Functor_Iter_Theory := Set_Functor_Iter_theory MT.
 
@@ -78,7 +82,7 @@ Let infinite_case_analysis (X Y:Set) (fs:forall j:nat, T_iter j X -> Y)  (h:T_st
     let (i,x):= h in fs i x.
 
 (* Note that this is not a coalgebra in the sense of Set_Coalgebra,
-because we do not require BS to be a Set_Fucntor. *)
+because we do not require BT to be a Set_Fucntor. *)
 
 Record BT_coalgebroid : Type := 
 { bs_states : Set 
@@ -398,4 +402,102 @@ Proof.
  apply (Lam_coiterator_4_11_bisim Lambda (Build_BT_coalgebroid X X_tr)).  
 Defined.
 
+Section setoid_facilities.
+
+Lemma Beta_morphism : forall (Lambda: T_over_B_distributive) (tx ty: T_ w.(states)), 
+   (maximal_bisimulation (Build_F_coalgebra _ (fun s_bx=> Lambda.(lambda_) _ (lift_T_ _ _ (transition w) s_bx)))
+                         (Build_F_coalgebra _ (fun s_bx=> Lambda.(lambda_) _ (lift_T_ _ _ (transition w) s_bx))) tx ty) ->
+   Beta Lambda tx (=) Beta Lambda ty.
+Proof.
+ intros [lam_ nat_lam] tx ty hyp; unfold Beta; apply B_unfold_morphism; assumption.
+Qed.
+
+Add Parametric Morphism (Lambda: T_over_B_distributive) : (Beta Lambda)
+ with signature  (maximal_bisimulation (Build_F_coalgebra _ (fun s_bx=> Lambda.(lambda_) _ (lift_T_ _ _ (transition w) s_bx))) 
+                                       (Build_F_coalgebra _ (fun s_bx=> Lambda.(lambda_) _ (lift_T_ _ _ (transition w) s_bx)))) ==> 
+                 (maximal_bisimulation w w) as Beta_Morphism.
+Proof. 
+ apply Beta_morphism.
+Qed.
+
+
+End setoid_facilities.
+
+
 End Lambda_Coiteration_theory.
+
+
+Module Primitive_Corecursion (MB:Weakly_Final_Coalgebra).
+
+Import MB.
+Export MB.
+
+Definition B_:=MB.F_.
+
+
+(* X |------> X + w *)
+Module Weak_fin_coalg_B_Set_module_argument <: Set_module_argument.
+Definition U:=w.(states).
+End Weak_fin_coalg_B_Set_module_argument.
+
+Module Weak_fin_coalg_as_Set_Functor:= constant_as_Set_Functor Weak_fin_coalg_B_Set_module_argument.
+
+Module Corecursion_Functor:=coproduct_as_Set_Functor identity_as_Set_Functor Weak_fin_coalg_as_Set_Functor.
+
+Module Import Corecursion_LamCoiter := Lambda_Coiteration_theory MB Corecursion_Functor.
+
+Let il (X:Set) (x:X) : T_ X := inl (states w) x.
+Let ir (X:Set) (w:w.(states)) : T_ X := inr X w.
+
+Let prim_corec_tupling (X:Set) (f:X->w.(states)) (tx:T_ X) : w.(states) := 
+       match tx with 
+       | inl x0 => f x0
+       | inr w0 => w0
+       end.
+
+Definition lambda_corecursion (X:Set) (tbx:T_ (B_ X)) : B_ (T_ X) :=
+       match tbx with
+       | inl bx => lift_B_ X (T_ X) (il X) bx
+       | inr w0 => lift_B_ w.(states) (T_ X) (ir X) (w.(transition) w0)
+       end.
+
+Lemma lambda_corecursion_natural: forall (X Y : Set) (f : X -> Y) (sbx : T_ (B_ X)),
+    lambda_corecursion Y (lift_T_ (B_ X) (B_ Y) (lift_B_ X Y f) sbx) =  lift_B_ (T_ X) (T_ Y) (lift_T_ X Y f) (lambda_corecursion X sbx).
+Proof.
+ intros X Y f [bx | w0]; simpl.
+ unfold identity_as_Set_Functor.lift_F_; do 2 rewrite lift_B_compose; apply lift_B_extensionality; trivial.
+ rewrite lift_B_compose; unfold Weak_fin_coalg_as_Set_Functor.lift_F_; apply lift_B_extensionality; trivial.
+Qed.
+
+Definition prim_corec_distributive:= Build_T_over_B_distributive lambda_corecursion lambda_corecursion_natural.
+
+Definition Corecursor:= Lam_coiterator prim_corec_distributive.
+
+Lemma Beta_corecursor_cotupling_id: forall (x: T_ w.(states)), Beta prim_corec_distributive x (=) prim_corec_tupling _ (fun x0 => x0) x.
+Proof.
+ apply (F_unique (Build_F_coalgebra _ (fun s_bx=> lambda_corecursion _ (lift_T_ _ _ (transition w) s_bx)))). 
+  intros x; apply (commutativity_F_unfold _ x). 
+  intros [x0 | w0]; simpl; rewrite lift_B_compose; apply lift_B_id.
+Qed.
+
+Lemma commutativity_Corecursor_rel_image_lifting (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
+rel_image_lift_B_ w w bisimilar (w.(transition) (Corecursor BT x))
+        (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)).
+Proof.
+ apply MB_Weakly_Final_Coalgebra_Theory.rel_image_bisimilar_transitive  
+  with (lift_B_ _ _ 
+        (fun x0=> Beta prim_corec_distributive (lift_T_ _ _ (Corecursor BT) x0)) (bs_transition BT x)).
+ 
+  generalize (commutativity_Lam_coiterator_rel_image_lifting prim_corec_distributive BT x).
+  fold Corecursor; rewrite lift_B_compose; trivial.
+
+  apply lift_B_extensionality_bisim.
+  clear; intros x.
+  rewrite Beta_corecursor_cotupling_id.
+  destruct x as [x0 | w0]; simpl.
+   unfold identity_as_Set_Functor.lift_F_; apply MB_Weakly_Final_Coalgebra_Theory.refl_bisimilar.
+   unfold Weak_fin_coalg_as_Set_Functor.lift_F_; apply MB_Weakly_Final_Coalgebra_Theory.refl_bisimilar.
+Qed.
+
+
+End Primitive_Corecursion.

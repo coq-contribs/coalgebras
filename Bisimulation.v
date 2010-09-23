@@ -1,5 +1,5 @@
 (************************************************************************)
-(* Copyright 2008 Milad Niqui                                           *)
+(* Copyright 2008-2010 Milad Niqui                                      *)
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
@@ -7,6 +7,7 @@
 (************************************************************************)
 
 Require Export ExtensionalFunctor.
+Require Export Setoid.
 
 (** Module types and theories for:
     
@@ -16,7 +17,7 @@ Require Export ExtensionalFunctor.
 
 Module Type Set_Coalgebra.
 
-Include Type Set_Functor.
+Include Set_Functor.
 
 Record F_coalgebra : Type :=
 { states : Set 
@@ -46,7 +47,7 @@ End Set_Coalgebra_theory.
 
 Module Type Bisimulation_For_Coalgebra.
 
-Include Type Set_Coalgebra.
+Include Set_Coalgebra.
 
 Definition rel_image_lift_F_ (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -> Prop) 
          (b_x : F_ (states S1)) (b_y : F_ (states S2)) : Prop :=
@@ -101,6 +102,17 @@ Definition lift_B_id:=MB.lift_F_id.
 Definition lift_B_extensionality:=MB.lift_F_extensionality.
 Definition relation_lift_B_:=MB.rel_image_lift_F_.
 
+Lemma stepl_bisimilar : forall S0 s1 s2 s3, maximal_bisimulation S0 S0 s1 s2 -> s1 = s3 -> maximal_bisimulation S0 S0 s3 s2.
+Proof.
+ intros S0 s1 s2 s3 hyp12 hyp13; subst s1; assumption.
+Qed.
+
+Lemma stepr_bisimilar : forall S0 s1 s2 s3, maximal_bisimulation S0 S0 s1 s2 -> s2 = s3 -> maximal_bisimulation S0 S0 s1 s3.
+Proof.
+ intros S0 s1 s2 s3 hyp12 hyp23; subst s2; assumption.
+Qed.
+Declare Left Step stepl_bisimilar.
+Declare Right Step stepr_bisimilar.
 
 Lemma is_F_bisimulation_is_F_bisimulation_strong (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop): is_F_bisimulation _ _ R -> is_F_bisimulation_strong _ _ R.
 Proof.
@@ -145,7 +157,6 @@ Proof.
  intros [[s1 s2] hyp]; split; simpl; simpl in hyp;
  rewrite lift_F_compose; rewrite lift_F_id; [| rewrite hyp]; trivial.
 Defined.
-
 
 Lemma inv_is_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop): is_F_bisimulation _ _ R -> is_F_bisimulation _ _ (fun x=>(fun y=>R y x)).
 Proof.
@@ -301,7 +312,7 @@ Proof.
  symmetry; assumption.
 Defined.
 
-Lemma comp_is_F_bisimulation_str (S1 S2 S3:F_coalgebra) (R12:S1.(states)->S2.(states)->Prop) 
+Lemma comp_is_F_bisimulation_strong (S1 S2 S3:F_coalgebra) (R12:S1.(states)->S2.(states)->Prop) 
                                                         (R23:S2.(states)->S3.(states)->Prop): 
   is_F_bisimulation _ _ R12 -> is_F_bisimulation _ _ R23 -> 
        is_F_bisimulation_strong _ _ (fun x=>(fun z=>{y |  R12 x y/\ R23 y z})).
@@ -406,9 +417,153 @@ Proof.
  unfold is_maximal_F_bisimulation.
  intros [[hyp1 _] hyp2].
  apply (hyp2 (fun x =>(fun z=>{ y | maximal_bisimulation S0 S0 x y/\maximal_bisimulation S0 S0 y z}))).
- assert (a:=comp_is_F_bisimulation_str S0 S0 S0 (maximal_bisimulation S0 S0) (maximal_bisimulation S0 S0) hyp1 hyp1).
+ assert (a:=comp_is_F_bisimulation_strong S0 S0 S0 (maximal_bisimulation S0 S0) (maximal_bisimulation S0 S0) hyp1 hyp1).
  exists a; trivial.
  exists s2; split; trivial.
 Defined.
+
+Lemma graph_morphism_is_F_bisimulation (S1 S2:F_coalgebra) (f:S1.(states)->S2.(states)) :
+                    (forall s1, lift_F_  _ _ f (S1.(transition) s1) = S2.(transition) (f s1)) ->
+                    is_F_bisimulation S1 S2 (fun x y=>y=f x).
+Proof.
+ intros hypf.
+ set (G_f:=fun x y=>y=f x).
+ set (R_:={s1s2 : states S1 * states S2 | G_f (fst s1s2) (snd s1s2)}).
+ set (fst_inv:=(fun s1:S1.(states)=> exist (fun s1s2=>snd s1s2=f (fst s1s2)) (s1,f(s1)) (refl_equal (f s1))) : S1.(states) -> R_).
+ exists (fun r_:R_ => lift_F_ _ _ fst_inv (S1.(transition) (fst (proj1_sig r_)))).
+ fold R_.
+ intros [[s1 s2] hyp]; simpl; do 2 rewrite lift_F_compose; split.
+  symmetry; apply lift_F_id.
+  rewrite hyp; simpl; rewrite <- (hypf s1); apply lift_F_extensionality; trivial.
+Qed.
+
+Lemma image_span_is_F_bisimulation_strong : forall (S1 S2 S3:F_coalgebra) (f:S2.(states)->S1.(states)) (g:S2.(states)->S3.(states)),
+                    (forall s2, lift_F_  _ _ f (S2.(transition) s2) = S1.(transition) (f s2)) ->
+                    (forall s2, lift_F_  _ _ g (S2.(transition) s2) = S3.(transition) (g s2)) ->
+                    is_F_bisimulation_strong S1 S3 (fun x=>(fun y=>{s2:S2.(states) | f s2 = x /\ g s2= y} )).
+Proof.
+ intros [S1 alpha_1] [S2 alpha_2] [S3 alpha_3] f g hyp_f hyp_g.
+ 
+ set (R:=fun x y => {s2:S2 | f s2 = x /\ g s2= y}).
+ set (R13 := {s1s3 : S1 * S3 &  R (fst s1s3) (snd s1s3)}).
+
+ set (i:=fun (is1 : R13) => proj1_sig (projT2 is1)).
+ set (j:=fun s2:S2 => existT (fun s1s3 : S1 * S3 => R (fst s1s3) (snd s1s3)) (f s2, g s2)
+                             (exist (fun s2' : S2 => f s2' = fst (f s2, g s2) /\ g s2' = snd (f s2, g s2))
+                             s2 (conj (refl_equal (fst (f s2, g s2))) (refl_equal (snd (f s2, g s2))))) ).
+ exists (fun is:R13 => lift_F_ _ _ j (alpha_2 (i is))).
+ intros [[s1 s3] [s2 [hyp1 hyp2]]].
+ simpl in *.
+ do 2 rewrite lift_F_compose.
+ split;
+ [ stepr (alpha_1 (f s2)); [rewrite <- hyp_f|subst s1; trivial]
+ | stepr (alpha_3 (g s2)); [rewrite <- hyp_g|subst s3; trivial]
+ ]; subst i; apply lift_F_extensionality; trivial.
+Qed.
+
+Lemma relation_equivalence_bisimulation (S1 S2:F_coalgebra) (R0 R1:S1.(states)->S2.(states)->Prop): 
+                is_F_bisimulation _ _ R0 -> (forall x y, R1 x y <-> R0 x y) -> is_F_bisimulation _ _ R1.
+Proof.
+ intros [gamma0 hyp_gamma0] hypsub.
+ assert (hypsub1:= fun  x y=>   match hypsub x y with
+                                | conj H0 _ => H0
+                                end).
+ assert (hypsub2:= fun  x y=>   match hypsub x y with
+                                | conj _ H1 => H1
+                                end).
+ red.
+ set (R0_:={s1s2 : states S1 * states S2 | R0 (fst s1s2) (snd s1s2)}).
+ set (R1_:={s1s2 : states S1 * states S2 | R1 (fst s1s2) (snd s1s2)}).
+ set (i10:= (fun (s0s1h:R1_) => exist (fun s1s2=> R0 (fst s1s2) (snd s1s2)) (fst (proj1_sig s0s1h), snd (proj1_sig s0s1h)) (hypsub1 (fst (proj1_sig s0s1h)) (snd (proj1_sig s0s1h)) (proj2_sig s0s1h))) : R1_ -> R0_). 
+ set (i01:= (fun (s0s1h:R0_) => exist (fun s1s2=> R1 (fst s1s2) (snd s1s2)) (fst (proj1_sig s0s1h), snd (proj1_sig s0s1h)) (hypsub2 (fst (proj1_sig s0s1h)) (snd (proj1_sig s0s1h)) (proj2_sig s0s1h))) : R0_ -> R1_). 
+ exists (fun r1_=> lift_F_ _ _ i01 (gamma0 (i10 r1_))).
+ intros s1s2h.
+ generalize (hyp_gamma0 (i10  s1s2h)).
+ clear.
+ fold R0_. 
+ do 2 rewrite lift_F_compose.
+ auto.
+Qed.
+
+Lemma relation_equivalence_bisimulation_strong (S1 S2:F_coalgebra) (R0:S1.(states)->S2.(states)->Set)(R1:S1.(states)->S2.(states)->Prop): 
+                is_F_bisimulation_strong _ _ R0 -> (forall x y, R1 x y -> R0 x y) -> (forall x y, R0 x y -> R1 x y)  -> is_F_bisimulation _ _ R1.
+Proof.
+ intros [gamma0 hyp_gamma0] hypsub1 hypsub2.
+ red.
+ set (R0_:={s1s2 : states S1 * states S2 & R0 (fst s1s2) (snd s1s2)}).
+ set (R1_:={s1s2 : states S1 * states S2 | R1 (fst s1s2) (snd s1s2)}).
+ set (i10:= (fun (s0s1h:R1_) => existS (fun s1s2=> R0 (fst s1s2) (snd s1s2)) (fst (proj1_sig s0s1h), snd (proj1_sig s0s1h)) (hypsub1 (fst (proj1_sig s0s1h)) (snd (proj1_sig s0s1h)) (proj2_sig s0s1h))) : R1_ -> R0_). 
+ set (i01:= (fun (s0s1h:R0_) => exist (fun s1s2=> R1 (fst s1s2) (snd s1s2)) (fst (projT1 s0s1h), snd (projT1 s0s1h)) (hypsub2 (fst (projT1 s0s1h)) (snd (projT1 s0s1h)) (projT2 s0s1h))) : R0_ -> R1_). 
+ exists (fun r1_=> lift_F_ _ _ i01 (gamma0 (i10 r1_))).
+ intros s1s2h.
+ generalize (hyp_gamma0 (i10  s1s2h)).
+ clear.
+ fold R0_. 
+ do 2 rewrite lift_F_compose.
+ auto.
+Qed.
+
+
+Lemma inverse_image_F_bisimulation_is_F_bisimulation (S1 S2:F_coalgebra) (f:S1.(states)->S2.(states))
+              (R:S2.(states)->S2.(states)->Prop): 
+                                  (forall s1, lift_F_  _ _ f (S1.(transition) s1) = S2.(transition) (f s1)) ->
+                             is_F_bisimulation _ _ R -> is_F_bisimulation S1 S1 (fun x y=>R (f x) (f y)). 
+Proof.
+ intros hypf hypR.
+ set (R_:=fun x y=>R (f x) (f y)).
+ set (G_f:=fun x y=>y=f(x)).
+ set (G_f_min:=fun x y=>x=f(y)).
+ set (R_o_G_f_min := fun x y=>R x (f y)).
+ set (G_f_o_R_o_G_f_min := fun x z=>{y |  G_f x y/\ R_o_G_f_min y z}).
+ set (R_o_G_f_min_str := fun x z=>{y |  R x y/\ G_f_min y z}).
+ assert (hyp_G_f := graph_morphism_is_F_bisimulation S1 S2 f hypf :is_F_bisimulation S1 S2 G_f).
+ apply relation_equivalence_bisimulation_strong with G_f_o_R_o_G_f_min.
+
+  apply comp_is_F_bisimulation_strong; trivial.
+  apply relation_equivalence_bisimulation_strong with R_o_G_f_min_str.
+
+   apply comp_is_F_bisimulation_strong; trivial.
+   apply inv_is_F_bisimulation; trivial.
+
+   intros x y hyp_R; exists (f y); split; try red; trivial.
+
+   intros x y [y0 [hyp1 hyp2]]; red in hyp2; subst y0; trivial.
+
+  intros x y hyp_R_; exists (f x); split; red; trivial.
+
+  intros x y [y0 [hyp1 hyp2]]; red in hyp1, hyp2; subst R_; simpl; subst y0; trivial.
+Qed.
+
+Lemma bisimulation_maximal_bisimulation:forall (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Prop) x y, 
+    R x y-> is_F_bisimulation _ _ R -> maximal_bisimulation S1 S2 x y.
+Proof.
+ intros S1 S2 R x y hyp_R hyp_bisim.
+ destruct (maximal_bisimulation_is_maximal S1 S2) as [hyp1 hyp2].
+ apply (hyp2 R); trivial;
+ exists (is_F_bisimulation_is_F_bisimulation_strong _ _ R hyp_bisim); trivial.
+Qed.  
+
+Lemma bisimulation_strong_maximal_bisimulation:forall (S1 S2:F_coalgebra) (R:S1.(states)->S2.(states)->Set) x y, 
+    R x y-> is_F_bisimulation_strong _ _ R -> maximal_bisimulation S1 S2 x y.
+Proof.
+ intros S1 S2 R x y hyp_R hyp_bisim.
+ destruct (maximal_bisimulation_is_maximal S1 S2) as [hyp1 hyp2].
+ apply (hyp2 R); trivial; exists hyp_bisim; trivial.
+Qed.  
+
+Add Parametric Relation (S0:F_coalgebra) : (states S0) (maximal_bisimulation S0 S0) 
+  reflexivity proved by (refl_bisimilar S0)
+  symmetry proved by (sym_bisimilar S0)
+  transitivity proved by (trans_bisimilar S0)
+as bisim_set_rel.
+
+Lemma rel_image_maximal_bisimulation_sym: forall (S1 S2 : F_coalgebra) 
+                                                    fs1 fs2,
+    rel_image_lift_F_ _ _ (maximal_bisimulation S2 S2) fs1 fs2 ->
+    rel_image_lift_F_ _ _ (maximal_bisimulation S2 S2) fs2 fs1.
+Proof.
+ intros S1 S2 fs1 fs2 (x1 & y1 & hyp11 & hyp12 & hyp13);
+ exists y1; exists x1; repeat split; trivial; apply sym_bisimilar; assumption.
+Qed. 
 
 End Bisimulation_theory.

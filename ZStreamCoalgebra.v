@@ -1,5 +1,5 @@
 (************************************************************************)
-(* Copyright 2008 Milad Niqui                                           *)
+(* Copyright 2008-2010 Milad Niqui                                      *)
 (* This file is distributed under the terms of the                      *)
 (* GNU Lesser General Public License Version 3                          *)
 (* A copy of the license can be found at                                *)
@@ -265,6 +265,8 @@ Definition commutativity_F_unfold (S0:F_coalgebra) :forall (x:S0.(states)), w.(t
 Definition bisimilar := maximal_bisimulation w w.
 
 Notation " A (=) B " := (maximal_bisimulation w w A B) (at level 70).
+Declare Left Step stepl_bisimilar.
+Declare Right Step stepr_bisimilar.
 
 Definition refl_bisimilar := refl_bisimilar w.
 
@@ -364,6 +366,87 @@ Proof.
  apply <- rel_image_lift_F_Str_bisimilar_spelled.
  apply lift_F_extensionality_bisim_Str; assumption.
 Defined.
+
+Lemma bisim_Str_spelled: forall (S0 S1: F_coalgebra) (R :S0.(states) -> S1.(states) -> Prop) (xs:S0.(states)) (ys:S1.(states)),
+ R xs ys -> is_F_bisimulation S0 S1 R -> fst (S0.(transition) xs) = fst (S1.(transition) ys) /\
+                                       R (snd (S0.(transition) xs)) (snd (S1.(transition) ys)).
+Proof. 
+ intros S0 S1 R xs ys hypR [gamma hyp_gamma].
+ destruct (hyp_gamma (exist (fun xy=> R (fst xy) (snd xy)) (xs,ys) hypR)) as [hyp1 hyp2].
+ unfold lift_F_ in *.
+ destruct (gamma (exist (fun xy : states S0 * states S1 => R (fst xy) (snd xy)) (xs, ys) hypR)) 
+                     as [b [[s1 s2] hyp]].
+ simpl in *.
+ destruct (S0.(transition) xs) as [x0 xs'].
+ destruct (S1.(transition) ys) as [y0 ys'].
+ simpl in *.
+ inversion hyp1; inversion hyp2.
+ subst x0 y0 xs' ys'; split; trivial.
+Qed. 
+ 
+
+
+Definition gamma_bisim_Str_pres_pair: forall (S0 S1: F_coalgebra),
+ let S0S1:=(S0.(states) * S1.(states))%type in 
+  let R:= fun (x y:S0S1)=>maximal_bisimulation _ _ (fst x) (fst y) in
+{s1s2 : S0S1 * S0S1 | R (fst s1s2) (snd s1s2)} -> F_ {s1s2 : S0S1 * S0S1 | R (fst s1s2) (snd s1s2)}.
+Proof.
+ intros S0 S1 S0S1 R [[[xs0 xs1] [ys0 ys1]] hyp].
+ refine (fst (S0.(transition) xs0), _).
+ exists ( (snd (S0.(transition) xs0), xs1) , (snd (S0.(transition) ys0), ys1) ).
+ subst R.
+ simpl in *.
+ destruct (bisim_Str_spelled _ _ (maximal_bisimulation S0 S0) xs0 ys0); trivial.
+ apply maximal_bisimulation_is_bisimulation.
+Defined.
+  
+
+Lemma bisim_Str_pres_pair : forall (S0 S1: F_coalgebra) (xs0 ys0:S0.(states)) (xs1 ys1:S1.(states)), 
+       maximal_bisimulation _ _ xs0 ys0 -> maximal_bisimulation
+     (Build_F_coalgebra (S0.(states)*S1.(states))
+         (fun x0x1 => (fst (S0.(transition) (fst x0x1)), (snd  (S0.(transition) (fst x0x1)) , snd x0x1))) )
+     (Build_F_coalgebra (S0.(states)*S1.(states))
+         (fun x0x1 => (fst (S0.(transition) (fst x0x1)), (snd  (S0.(transition) (fst x0x1)) , snd x0x1))) )
+        (xs0, xs1) (ys0, ys1).
+Proof.
+ Proof.
+ intros S0 S1 xs0 ys0 xs1 ys1 hyp.
+ set (S0S1:=(S0.(states) * S1.(states))%type).
+ destruct (maximal_bisimulation_is_bisimulation S0 S0) as [gamma _].
+ set (R_:=fun (x y:S0S1)=>{s0s1: S0.(states) * S0.(states) | fst s0s1 = fst x/\ snd s0s1 = fst y /\ 
+                        maximal_bisimulation _ _ (fst x) (fst y)}).
+ set (R'_:=fun (x y:S0S1)=>maximal_bisimulation _ _ (fst x) (fst y)).
+ apply (bisimulation_maximal_bisimulation 
+(Build_F_coalgebra S0S1
+        (fun x0x1 : S0S1 =>
+         (fst (transition S0 (fst x0x1)),
+         (snd (transition S0 (fst x0x1)), snd x0x1))))
+     (Build_F_coalgebra S0S1
+        (fun x0x1 : S0S1 =>
+         (fst (transition S0 (fst x0x1)),
+         (snd (transition S0 (fst x0x1)), snd x0x1))))
+R'_).   
+   subst R'_; trivial.
+
+   red; simpl.
+   exists (gamma_bisim_Str_pres_pair S0 S1).
+   clear.
+   intros [[[xs0 xs1] [ys0 ys1]] hyp].
+   subst R'_.
+   simpl in *; split; trivial.
+   f_equal.
+   destruct (bisim_Str_spelled S0 S0 (maximal_bisimulation S0 S0) xs0 ys0 hyp (maximal_bisimulation_is_bisimulation S0 S0)); trivial.
+Qed.
+
+Add Morphism (@tl B) with signature  (maximal_bisimulation w w) ==> (maximal_bisimulation w w) as tl_Morphism.
+Proof. 
+ intros (x0 & x1 & xs) (y0 & y1 & ys) hyp; inversion hyp as [hyp0 hyp1]; inversion hyp1 as [hyp2 hyp3]; constructor; trivial.
+Qed.
+
+Add Morphism (@hd B) with signature  (maximal_bisimulation w w) ==> (@eq B) as hd_Morphism.
+Proof.
+ intros (x0 & x1 & xs) (y0 & y1 & ys) hyp; inversion hyp as [hyp0 hyp1] ; inversion hyp1 as [hyp2 hyp3]; trivial.
+Qed.
 
 
 End Streams_as_Weakly_Final_Coalgebra.
