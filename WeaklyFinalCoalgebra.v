@@ -92,7 +92,7 @@ Proof.
  set (f_inv_delta:=fun x y=> f x (=) f y).
  apply bisimulation_maximal_bisimulation with f_inv_delta.
   assumption.
-  apply inverse_image_F_bisimulation_is_F_bisimulation.
+  apply inverse_image_F_bisimulation_is_F_bisimulation with (S2 := w).
    subst f; intros s0; symmetry; apply (commutativity_F_unfold S0 s0).
    apply maximal_bisimulation_is_bisimulation.
 Qed.

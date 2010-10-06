@@ -324,7 +324,7 @@ Proof.
      rewrite <- Lam_coiterator_4_2_2_naturality_right.
      unfold alpha_sigma, alpha_phi.
      rewrite <- lift_T_compose with (Y:=B_ (T_star_ (T_ X))).
-     rewrite <- lift_T_compose with (Y:=T_star_ (B_ (T_ X))).
+     rewrite <- lift_T_compose with (X:=T_star_ X) (Y:=T_star_ (B_ (T_ X))).
      (* 8 *)
      assert (square8:lift_T_ _ _ (lift_T_star_ X (B_ (T_ X)) X_tr) (infinite_case_analysis _ _ bracket_T_j hsx)=
                      infinite_case_analysis _ _ (bracket_T_j_fun (B_ (T_ X))) (lift_T_star_ _ _ (lift_T_ X (B_ (T_ X)) X_tr) hsx)).
