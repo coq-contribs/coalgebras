@@ -6,6 +6,7 @@
 (*                  <http://www.gnu.org/licenses/lgpl-3.0.html>         *)
 (************************************************************************)
 
+Set Asymmetric Patterns.
 Require Import WeaklyFinalCoalgebra.
 
 (** Implementation of the weakly final coalgebra of potentially
