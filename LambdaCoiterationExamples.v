@@ -55,7 +55,7 @@ Lemma commutativity_Conv_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgebr
 Proof.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
-Defined.
+Qed.
 
 
 Lemma commutativity_Conv_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
@@ -64,7 +64,7 @@ Lemma commutativity_Conv_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroi
 Proof.
  revert Lambda BS x.
  apply commutativity_Conv_fst_snd.
-Defined.
+Qed.
 
 Lemma commutativity_Conv_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
@@ -79,7 +79,7 @@ Proof.
   | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2; trivial
   end.
   apply refl_bisimilar. 
-Defined.
+Qed.
 
 Lemma commutativity_Conv_Cons_2 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (fun s0=>Beta Lambda (lift_T_ _ _ (Lam_coiterator Lambda BS) s0)) (BS.(bs_transition) x)))
@@ -87,7 +87,7 @@ Lemma commutativity_Conv_Cons_2 (Lambda:T_over_B_distributive) (BS: BT_coalgebro
 Proof.
  rewrite <- lift_B_compose with (Y:=T_ (Str.(states))).
  apply commutativity_Conv_Cons_1.
-Defined.
+Qed.
 
 Section Example_convolution.
 
@@ -114,7 +114,7 @@ Lemma lambda_convolution_natural: forall (X Y : Set) (f : X -> Y) (sbx : T_ (B_ 
     lambda_convolution Y (lift_T_ (B_ X) (B_ Y) (lift_B_ X Y f) sbx) =  lift_B_ (T_ X) (T_ Y) (lift_T_ X Y f) (lambda_convolution X sbx).
 Proof.
  intros X Y f [[b0 x0] [b1 x1]]; trivial. 
-Defined.
+Qed.
 
 
 Definition Lambda_convolution:T_over_B_distributive := Build_T_over_B_distributive lambda_convolution lambda_convolution_natural.
@@ -140,7 +140,7 @@ Proof.
  unfold pointwise_plus, Beta, Lambda_convolution, F_unfold.
  simpl; rewrite Str_unfold_unfolded.
  reflexivity.
-Defined.
+Qed.
 
 
 Section shuffle_product.
@@ -172,7 +172,7 @@ Proof.
  [ assumption
  |   destruct xs as [x xs']; destruct ys as [y ys']; apply refl_bisimilar
  ].
-Defined.
+Qed.
 
 End shuffle_product.
 
@@ -196,7 +196,7 @@ Definition zeros : B_pow_inf := Streams_as_Weakly_Final_Coalgebra.F_unfold (Stre
 Lemma zeros_cofixed: zeros = Cons ZeroB zeros.
 Proof.
  unfold zeros, F_unfold; simpl; rewrite Str_unfold_unfolded at 1; trivial.
-Defined.
+Qed.
 
 Definition coalgebra_convolution: BT_coalgebroid := 
    Build_BT_coalgebroid (B_pow_inf * B_pow_inf)
@@ -218,7 +218,7 @@ Proof.
  [ assumption
  | destruct xs as [x xs']; destruct ys as [y ys']; apply refl_bisimilar
  ].
-Defined.
+Qed.
 
 End convolution_product.
 
@@ -269,11 +269,9 @@ Proof.
  [ assumption
  | apply refl_bisimilar
  ].
-Defined.
+Qed.
 
 End Example_pow.
-
-
 
 Module Import Streams_map_S_LamCoiter := Lambda_Coiteration_theory Streams_as_Weakly_Final_Coalgebra B_map_S_Functor.
 
@@ -285,7 +283,7 @@ Lemma commutativity_map_S_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgeb
 Proof.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
-Defined.
+Qed.
 
 
 Lemma commutativity_map_S_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
@@ -293,7 +291,7 @@ Lemma commutativity_map_S_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  tl (Lam_coiterator Lambda BS x) (=) snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
  apply (commutativity_map_S_fst_snd Lambda BS x).
-Defined.
+Qed.
 
 Lemma commutativity_map_S_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
@@ -308,7 +306,7 @@ Proof.
   | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2; trivial
   end.
   apply refl_bisimilar. 
-Defined.
+Qed.
 
 Section Example_map_S.
 
@@ -332,7 +330,7 @@ Lemma lambda_map_S_natural: forall (X Y : Set) (f : X -> Y) (sbx : T_ (B_ X)),
     lambda_map_S Y (lift_T_ (B_ X) (B_ Y) (lift_B_ X Y f) sbx) =  lift_B_ (T_ X) (T_ Y) (lift_T_ X Y f) (lambda_map_S X sbx).
 Proof.
  intros X Y f [phi [b x]]; trivial. 
-Defined.
+Qed.
  
 Definition Lambda_map_S:T_over_B_distributive := Build_T_over_B_distributive lambda_map_S lambda_map_S_natural.
 
@@ -354,7 +352,7 @@ Proof.
  unfold map_, Beta, Lambda_map_S, F_unfold.
  simpl; rewrite Str_unfold_unfolded.
  reflexivity.
-Defined.
+Qed.
 
 Lemma nats_cofixed : nats (=)  Cons 0 (map_ (fun x=>x+1) nats).
 Proof.
@@ -365,7 +363,7 @@ Proof.
  [ assumption
  | apply refl_bisimilar
  ].
-Defined.
+Qed.
 
 End Example_map_S.
 
@@ -381,7 +379,7 @@ Lemma commutativity_Fib_fst_snd (Lambda:T_over_B_distributive) (BS: BT_coalgebro
 Proof.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Lam_coiterator_rel_image_lifting.
-Defined.
+Qed.
 
 
 Lemma commutativity_Fib_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
@@ -389,7 +387,7 @@ Lemma commutativity_Fib_hd_tl (Lambda:T_over_B_distributive) (BS: BT_coalgebroid
  tl (Lam_coiterator Lambda BS x) (=) snd( lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))).
 Proof.
  apply (commutativity_Fib_fst_snd Lambda BS x).
-Defined.
+Qed.
 
 Lemma commutativity_Fib_Cons_1 (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (Beta Lambda) (lift_B_ _ _  (lift_T_ _ _ (Lam_coiterator Lambda BS)) (bs_transition BS x))))
@@ -404,7 +402,7 @@ Proof.
   | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2; trivial
   end.
   apply refl_bisimilar. 
-Defined.
+Qed.
 
 Section Example_fibonacci.
 
@@ -429,7 +427,7 @@ Lemma lambda_fibonacci_natural: forall (X Y : Set) (f : X -> Y) (sbx : T_ (B_ X)
     lambda_fibonacci Y (lift_T_ (B_ X) (B_ Y) (lift_B_ X Y f) sbx) =  lift_B_ (T_ X) (T_ Y) (lift_T_ X Y f) (lambda_fibonacci X sbx).
 Proof.
  intros X Y f [b0 [[b1 x1] [b2 x2]]]; trivial. 
-Defined.
+Qed.
  
 Definition Lambda_fibonacci:T_over_B_distributive := Build_T_over_B_distributive lambda_fibonacci lambda_fibonacci_natural.
 
@@ -450,7 +448,7 @@ Proof.
  unfold pointwise_plus_tl, Beta, Lambda_fibonacci, F_unfold.
  simpl; rewrite Str_unfold_unfolded.
  reflexivity.
-Defined.
+Qed.
 
 Lemma fib_cofixed : fib (=)  Cons 0 (pointwise_plus_tl 1 fib fib).
 Proof.
@@ -461,7 +459,7 @@ Proof.
  [ assumption
  | apply refl_bisimilar
  ].
-Defined.
+Qed.
 
 Section fib_satisfies_other_equation.  
 
@@ -477,7 +475,7 @@ Proof.
  rewrite pointwise_plus_cofixed.
  constructor; trivial.
   apply (pointwise_plus_pointwise_plus_tl x0 xs ys).
-Defined.
+Qed.
 
 Lemma pointwise_plus_comm :forall xs ys, pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
@@ -488,7 +486,7 @@ Proof.
  constructor; simpl.
   auto with zarith. 
   apply pointwise_plus_comm. 
-Defined.
+Qed.
 
 Lemma fib_satisfies_other_equation : fib (=)  Cons 0 (Cons 1 (pointwise_plus (tl fib) fib)).
 Proof.
@@ -497,7 +495,7 @@ Proof.
  apply trans_bisimilar with (pointwise_plus (Cons 1 fib) fib); [apply (pointwise_plus_pointwise_plus_tl 1 fib fib)|].
  rewrite pointwise_plus_cofixed.
  constructor; [trivial|simpl; apply pointwise_plus_comm].
-Defined.
+Qed.
 
 End using_cofix.
 
@@ -530,7 +528,7 @@ Proof.
   destruct hyp as (x0 & xs0 & ys0 & hyp1 & hyp2).
   simpl in hyp1,hyp2; rewrite hyp1, hyp2, pointwise_plus_cofixed, pointwise_plus_tl_cofixed; trivial.
  exists x; exists xs;exists ys; split; trivial. 
-Defined.
+Qed.
 
 Definition gamma_pointwise_plus_comm:
   let R':=fun xs ys => exists xs0, exists ys0, xs = pointwise_plus xs0 ys0 /\ ys = pointwise_plus ys0 xs0 in 
@@ -558,7 +556,7 @@ Proof.
   destruct hyp as (xs0 & ys0 & hyp1 & hyp2).
   simpl in hyp1,hyp2; rewrite hyp1, hyp2, pointwise_plus_cofixed; simpl; auto with zarith. 
  exists xs;exists ys; split; trivial. 
-Defined.
+Qed.
 
 Lemma fib_satisfies_other_equation_2 : fib (=)  Cons 0 (Cons 1 (pointwise_plus (tl fib) fib)).
 Proof.
@@ -567,7 +565,7 @@ Proof.
  apply trans_bisimilar with (pointwise_plus (Cons 1 fib) fib); [apply (pointwise_plus_pointwise_plus_tl_2 1 fib fib)|].
  rewrite pointwise_plus_cofixed.
  constructor; [trivial|simpl; apply pointwise_plus_comm_2].
-Defined.
+Qed.
 
 End without_cofix.
 
@@ -589,7 +587,7 @@ Lemma commutativity_Primitive_Corecursion_fst_snd (BT: BT_coalgebroid) (x:BT.(bs
 Proof.
  apply -> rel_image_lift_F_Str_bisimilar_spelled.
  apply commutativity_Corecursor_rel_image_lifting.
-Defined.
+Qed.
 
 Lemma commutativity_Primitive_Corecursion_hd_tl (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
  hd (Corecursor BT x) =
@@ -598,7 +596,7 @@ Lemma commutativity_Primitive_Corecursion_hd_tl (BT: BT_coalgebroid) (x:BT.(bs_s
  snd (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)).
 Proof.
  apply (commutativity_Primitive_Corecursion_fst_snd BT x).
-Defined.
+Qed.
 
 Lemma commutativity_Primitive_Corecursion_Cons (BT: BT_coalgebroid) (x:BT.(bs_states)) : 
  Corecursor BT x (=) Cons (fst (lift_B_ _ _ (prim_corec_tupling _ (Corecursor BT)) (BT.(bs_transition) x)))
@@ -613,7 +611,7 @@ Proof.
   | [ id1 : ?X1 (=) ?X2  |- _ ] => apply trans_bisimilar with X2; trivial
   end.
   apply refl_bisimilar. 
-Defined.
+Qed.
 
 Section primitive_corecursion_example.
 

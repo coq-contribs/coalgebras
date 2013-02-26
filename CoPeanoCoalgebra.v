@@ -18,12 +18,12 @@ Section sum_addenda.
 Lemma inl_injection:forall (A B:Type) (x y:A), inl B x = inl B y -> x=y.
 Proof.
  intros A B x y hyp; injection hyp; trivial.
-Defined.
+Qed.
 
 Lemma inr_injection:forall (A B:Type) (x y:A), inr B x = inr B y -> x=y.
 Proof.
  intros A B x y hyp; injection hyp; trivial.
-Defined.
+Qed.
 
 End sum_addenda.
 
@@ -55,25 +55,25 @@ Lemma unfold_conat : forall n:conat,
         end.
 Proof.
  intros [|n']; trivial.
-Defined.
+Qed.
 
 Lemma pred_id:forall n:conat, 
     n = co_O_S (pred n).
 Proof.
  intros [|n']; trivial.
-Defined.
+Qed.
 
 Lemma pred_inl_co_O:forall (n:conat) (u:unit), inl conat u = pred n -> n = co_O.
 Proof.
  intros [|n''] u hyp; trivial; discriminate hyp. 
-Defined.
+Qed.
 
 Lemma pred_inr_co_S:forall (n n':conat), inr unit n' = pred n -> n = co_S n'.
 Proof.
  intros [|n''] n' hyp;
  [ discriminate hyp
  | rewrite (inr_injection _ _ _ _ hyp); trivial].
-Defined.
+Qed.
 
 
 (** This is useful for computing with [conat] inside Coq. 
@@ -109,19 +109,19 @@ Definition lift_F_ (X Y:Set) (f:X->Y) (bx: F_ X) : F_ Y:=
 Lemma lift_F_id :forall X (bx: F_ X), bx = lift_F_ X X (fun x0 : X => x0) bx.
 Proof.
  intros X [star|x]; trivial.
-Defined.
+Qed.
 
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) bx: 
    (fun bx0 => lift_F_ Y Z f (lift_F_ X Y g bx0)) bx = lift_F_ X Z (fun x => f (g x)) bx.
 Proof.
  destruct bx as [start|x]; trivial.
-Defined.
+Qed.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) bx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 bx = lift_F_ _ _ f1 bx.
 Proof.
  intros X Y f0 f1 bx hyp_ext;
  unfold lift_F_; destruct bx as [star|x]; repeat rewrite hyp_ext; trivial.
-Defined.
+Qed.
 
 Record F_coalgebra : Type :=
 { states : Set 
@@ -170,7 +170,7 @@ Proof.
  destruct (X_tr x) as [star|x']; intros hyp.
   left; exists star; trivial.
   right; exists x'; trivial.
-Defined. 
+Qed. 
 
 Definition maximal_bisimulation_conat_pred : forall (S1 S2:F_coalgebra), 
 {s1s2 : S1.(states) * S2.(states)| maximal_bisimulation _ _ (fst s1s2) (snd s1s2)} -> 
@@ -207,7 +207,7 @@ Proof.
  destruct (conat_transition_dec_inf S1 x) as [[starX hyp_trX]|[x' hyp_trX]].
   f_equal; induction starX; destruct u; reflexivity.
   apply False_ind; rewrite hyp1 in hyp_trX; discriminate hyp_trX.
-Defined.
+Qed.
 
 
 Lemma maximal_bisimulation_conat_pred_property2: forall (S1 S2:F_coalgebra) 
@@ -311,7 +311,7 @@ Proof.
    [rewrite <- hyp1 |rewrite <- hyp2| ]; [f_equal|f_equal|].
 
    apply (maximal_bisimulation_is_maximal _ _ R' h_coind); assumption.
-Defined.
+Qed.
 
 Definition weak_pullback (X Y Z:Set) (f:X->Z) (g:Y->Z):={ xy:(X*Y) | f(fst xy)=g(snd xy)}.
 
@@ -332,7 +332,7 @@ Lemma F_pres_weak_pullback_arr: forall (X Y Z:Set) (f:X->Z) (g:Y->Z)
 Proof.
  intros X Y Z f g [[[ux|x] [uy|y]] h]; simpl in h; unfold wkpk_id_rht, lift_F_; split; trivial; simpl;
  first [rewrite (inl_injection _ _ _ _ h); trivial|discriminate h].
-Defined.
+Qed.
 
 
 End Bisimulation_For_Coalgebra_CoPeano.
@@ -373,7 +373,7 @@ Proof.
  revert HeqX_tr_x;
  pattern (X_tr_x);
  destruct (X_tr_x) as [u | x']; intros hyp_X;simpl; rewrite <- hyp_X; reflexivity.
-Defined.
+Qed.
 
 Lemma commutativity_CoPeano_unfold  (S0: F_coalgebra) (x:S0.(states)) : 
        CoPeano.(transition) (CoPeano_unfold S0 x) = (lift_F_ _ _ (CoPeano_unfold S0)) (S0.(transition) x).
@@ -383,7 +383,7 @@ Proof.
  set (X_tr_x:=X_tr x). 
  destruct X_tr_x as [u|x']; trivial.
  destruct u; reflexivity.
-Defined.
+Qed.
 
 Lemma w_is_weakly_final:is_weakly_final w.
 Proof.
@@ -425,7 +425,7 @@ Proof.
   [ rewrite <- hyp_X; reflexivity
   | reflexivity
   | apply (CoPeano_unfold_bisim_unique _ _ hyp)].
-Defined.
+Qed.
 
 Lemma CoPeano_unique_with_cons:forall (S0:F_coalgebra) f g, 
    (forall (s0: S0.(states)), (f s0) = match S0.(transition) s0 with
@@ -441,7 +441,7 @@ Proof.
  intros S0 f g Hf Hg s0.
  apply trans_bisimilar with (CoPeano_unfold S0 s0); 
  [apply sym_bisimilar|]; apply CoPeano_unfold_bisim_unique ; assumption.
-Defined.
+Qed.
 
 
 Lemma F_unique:forall (S0:F_coalgebra) f g, 
@@ -454,7 +454,7 @@ Proof.
  [ destruct (S0_tr s) as [u|x']; [ apply pred_inl_co_O with u| apply pred_inr_co_S]
  | destruct (S0_tr s) as [u|x']; [ apply pred_inl_co_O with u| apply pred_inr_co_S]
  ]; symmetry; trivial.
-Defined.
+Qed.
 
 
 Lemma lift_F_extensionality_bisim_CoPeano: forall (X:Set) (f0 f1:X->CoPeano.(states)) bx, (forall x, f0 x (=) f1 x) -> 
@@ -468,7 +468,7 @@ Proof.
  destruct bx as [u|x']. 
   split; destruct u; trivial.
   exists (f0 x'); exists (f1 x'); repeat split; trivial.
-Defined.
+Qed.
 
 
 Lemma rel_image_lift_F_CoPeano_bisimilar_spelled: forall (b_x b_y: F_ CoPeano.(states)),  
@@ -498,7 +498,7 @@ Proof.
   destruct hyp as [x' [y' [hyp [hyp1 hyp2]]]];
    replace (co_S x) with x'; [replace (co_S y) with y'; trivial|]; apply pred_inr_co_S; assumption...
   exists (co_S x); exists (co_S y); repeat split; simpl; assumption.
-Defined.
+Qed.
  
 Lemma lift_F_extensionality_bisim: forall (X:Set) (f0 f1:X->w.(states)) bx, (forall x, f0 x (=) f1 x) -> rel_image_lift_F_ _ _ bisimilar (lift_F_  _ _ f0 bx) (lift_F_ _ _ f1 bx).
 Proof.

@@ -48,7 +48,6 @@ Export MB.
 
 Include (Bisimulation_theory MB).
 
-
 Lemma ordinary_coinduction:forall (R: w.(states)-> w.(states)->Prop) x y, 
     R x y-> is_F_bisimulation _ _ R -> x (=) y.
 Proof.

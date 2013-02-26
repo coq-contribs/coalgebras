@@ -40,7 +40,7 @@ Proof.
   rewrite (Hg (f s0)). 
   rewrite (Hf s0).
   rewrite lift_F_compose; trivial.
-Defined.
+Qed.
 
 End Set_Coalgebra_theory.
 
@@ -258,7 +258,7 @@ Lemma pre_bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
 Proof.
  destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
-Defined.
+Qed.
 
 Lemma pre_bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
@@ -266,7 +266,7 @@ Lemma pre_bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
 Proof.
  destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
-Defined.
+Qed.
 
 
 Definition bisim_pullback_structure (S1 S2 S3:F_coalgebra) R12 R23
@@ -294,7 +294,7 @@ Proof.
  stepr (fst (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
  rewrite <- (pre_bisim_pullback_structure_prop1 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
-Defined.
+Qed.
 
 Definition bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
@@ -310,7 +310,7 @@ Proof.
  stepr (snd (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
  rewrite <- (pre_bisim_pullback_structure_prop2 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
-Defined.
+Qed.
 
 Lemma comp_is_F_bisimulation_strong (S1 S2 S3:F_coalgebra) (R12:S1.(states)->S2.(states)->Prop) 
                                                         (R23:S2.(states)->S3.(states)->Prop): 
@@ -385,7 +385,7 @@ Proof.
   rewrite lift_F_compose.
   apply lift_F_extensionality.
   intros [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp]; reflexivity.
-Defined.
+Qed.
 
 Theorem refl_bisimilar : forall S0 s, maximal_bisimulation S0 S0 s s.
 Proof.
@@ -396,7 +396,7 @@ Proof.
  apply (hyp2 (@eq S0.(states))); trivial. 
  assert (a:=delta_is_F_bisimulation S0).
  exists (is_F_bisimulation_is_F_bisimulation_strong _ _ (@eq S0.(states)) a); trivial.
-Defined.
+Qed.
 
 Theorem sym_bisimilar : forall S0 s1 s2, maximal_bisimulation S0 S0 s1 s2 -> maximal_bisimulation S0 S0 s2 s1.
 Proof.
@@ -407,7 +407,7 @@ Proof.
  apply (hyp2 (fun x =>(fun y=>maximal_bisimulation S0 S0 y x))); trivial.
  assert (a:=inv_is_F_bisimulation S0 S0 (maximal_bisimulation S0 S0) hyp1).
  exists (is_F_bisimulation_is_F_bisimulation_strong _ _ _  a); trivial.
-Defined.
+Qed.
 
 Theorem trans_bisimilar : forall S0 s1 s2 s3, maximal_bisimulation S0 S0 s1 s2 ->
                                maximal_bisimulation S0 S0 s2  s3 -> maximal_bisimulation S0 S0 s1 s3.
@@ -420,7 +420,7 @@ Proof.
  assert (a:=comp_is_F_bisimulation_strong S0 S0 S0 (maximal_bisimulation S0 S0) (maximal_bisimulation S0 S0) hyp1 hyp1).
  exists a; trivial.
  exists s2; split; trivial.
-Defined.
+Qed.
 
 Lemma graph_morphism_is_F_bisimulation (S1 S2:F_coalgebra) (f:S1.(states)->S2.(states)) :
                     (forall s1, lift_F_  _ _ f (S1.(transition) s1) = S2.(transition) (f s1)) ->

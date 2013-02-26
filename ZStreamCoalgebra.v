@@ -29,12 +29,12 @@ Definition hd (A : Type) (x : Stream A) := match x with | Cons a _ => a end.
 Lemma unfold_Stream : forall x:Stream A, x = match x with | Cons a s => Cons a s end. 
 Proof.
   intros [x xs]; reflexivity. 
-Defined.
+Qed.
 
 Lemma hd_tl_id:forall xs:Stream A, xs = Cons (hd xs) (tl xs).
 Proof.
  intros [x xs]; trivial.
-Defined.
+Qed.
 
 End Streams.
 
@@ -58,19 +58,19 @@ Definition lift_F_ (X Y:Set) (f:X->Y) (bx: F_ X) : F_ Y := let (b0,x0):=bx in (b
 Lemma lift_F_id :forall X (bx: F_ X), bx = lift_F_ X X (fun x0 : X => x0) bx.
 Proof.
  intros X [b x]; trivial.
-Defined.
+Qed.
 
 Lemma lift_F_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) bx: 
    (fun bx0 => lift_F_ Y Z f (lift_F_ X Y g bx0)) bx = lift_F_ X Z (fun x => f (g x)) bx.
 Proof.
  destruct bx as [b0 x0]; trivial.
-Defined.
+Qed.
 
 Lemma lift_F_extensionality: forall (X Y:Set) (f0 f1:X->Y) bx, (forall x, f0 x = f1 x) -> lift_F_  _ _ f0 bx = lift_F_ _ _ f1 bx.
 Proof.
  intros X Y f0 f1 bx hyp_ext;
  unfold lift_F_; destruct bx as [b x]; repeat rewrite hyp_ext; trivial.
-Defined.
+Qed.
 
 Record F_coalgebra : Type :=
 { states : Set 
@@ -177,7 +177,7 @@ Proof.
    rewrite <- hyp2_1.
    destruct xyh as [[x y] h].
    trivial.
-Defined.
+Qed.
 
 Definition weak_pullback (X Y Z:Set) (f:X->Z) (g:Y->Z):={ xy:(X*Y) | f(fst xy)=g(snd xy)}.
 
@@ -216,7 +216,7 @@ Proof.
  f_equal.
  change (fst (b0, f x) = fst (b1, g y)).
  rewrite h; reflexivity.
-Defined.
+Qed.
 
 End Bisimulation_For_Coalgebra_Streams. 
 
@@ -242,7 +242,7 @@ CoFixpoint Str_unfold (S0:F_coalgebra) (s0: S0.(states)) : Str.(states):=
 Lemma Str_unfold_unfolded:forall (S0:F_coalgebra) (s0: S0.(states)), Str_unfold S0 s0 = Cons (hd_ S0 s0) (Str_unfold S0 (tl_ S0 s0)).
 Proof.
  decomp_coind.
-Defined.
+Qed.
 
 Lemma commutativity_Str_unfold  (S0: F_coalgebra) (x:S0.(states)) : 
        Str.(transition) (Str_unfold S0 x) = (lift_F_ _ _ (Str_unfold S0)) (S0.(transition) x).
@@ -251,7 +251,7 @@ Proof.
  rewrite Str_unfold_unfolded; simpl.
  set (s0_tr_x:=s0_tr x). 
  destruct s0_tr_x as (b,tr); trivial.
-Defined.
+Qed.
 
 Lemma w_is_weakly_final:is_weakly_final w.
 Proof.
@@ -285,7 +285,7 @@ Proof.
  constructor; trivial.
  simpl.
  apply (Str_unfold_bisim_unique _ _ H (tl_ S0 s0)). 
-Defined.
+Qed.
 
 
 Lemma Str_unique_with_cons:forall (S0:F_coalgebra) f g, 
@@ -296,7 +296,7 @@ Proof.
  intros S0 f g Hf Hg s0.
  apply trans_bisimilar with (Str_unfold S0 s0); 
  [apply sym_bisimilar|]; apply Str_unfold_bisim_unique ; assumption.
-Defined.
+Qed.
 
 
 Lemma F_unique:forall (S0:F_coalgebra) f g, 
@@ -315,14 +315,14 @@ Proof.
    [ unfold hd_; change (fst (hd (g s), tl (g s))=fst (S0_tr s))
    | unfold tl_; change (snd (hd (g s), tl (g s))=g (snd (S0_tr s)))
    ]; destruct (S0_tr s) as [h_s t_s]; rewrite Hgs; simpl; trivial.
-Defined.   
+Qed.
 
 Lemma lift_F_extensionality_bisim_Str: forall (X:Set) (f0 f1:X->Str.(states)) bx, (forall x, f0 x (=) f1 x) -> fst (lift_F_  _ _ f0 bx) = fst (lift_F_ _ _ f1 bx) /\ snd  (lift_F_  _ _ f0 bx) (=) snd (lift_F_ _ _ f1 bx).
 Proof.
  intros X f0 f1 bx hyp_ext.
  unfold lift_F_.
  destruct bx as [b x]; split; simpl; trivial.
-Defined.
+Qed.
 
 Lemma rel_image_lift_F_Str_bisimilar_spelled: forall (b_x b_y: F_ Str.(states)),  
      rel_image_lift_F_ _ _ bisimilar b_x b_y <-> fst b_x = fst b_y /\ snd b_x (=) snd b_y.
@@ -358,7 +358,7 @@ Proof.
  split.
   constructor; assumption.
   split; simpl; trivial.
-Defined.
+Qed.
  
 Lemma lift_F_extensionality_bisim: forall (X:Set) (f0 f1:X->w.(states)) bx, (forall x, f0 x (=) f1 x) -> rel_image_lift_F_ _ _ bisimilar (lift_F_  _ _ f0 bx) (lift_F_ _ _ f1 bx).
 Proof.

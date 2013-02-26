@@ -59,13 +59,13 @@ Let lift_T_star_ (X Y:Set) (f:X->Y) (hx: T_star_ X) : T_star_ Y := let (j, s_ix)
 Let lift_T_star_id :forall X (fx: T_star_ X), fx = lift_T_star_ X X (fun x0 : X => x0) fx.
 Proof.
  intros X [j x0]; simpl; assert (hyp0:=lift_T_iter_id X j x0); fold lift_T_iter in hyp0; rewrite <- hyp0; trivial.
-Defined.
+Qed.
 
 Let lift_T_star_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) hx: 
    (fun hx0 => lift_T_star_ Y Z f (lift_T_star_ X Y g hx0)) hx = lift_T_star_ X Z (fun x => f (g x)) hx.
 Proof.
  destruct hx as [j x0]; simpl; rewrite lift_T_iter_compose; trivial.
-Defined.
+Qed.
 
 Let lift_T_star_extensionality: forall (X Y:Set) (f0 f1:X->Y) hx, (forall x, f0 x = f1 x) -> lift_T_star_  _ _ f0 hx = lift_T_star_ _ _ f1 hx.
 Proof.
@@ -73,7 +73,7 @@ Proof.
  simpl.
  f_equal.
  apply lift_T_iter_extensionality; trivial.
-Defined.
+Qed.
 
 
 Let T_star_coproject_ (X:Set) (j:nat) (x: T_iter j X) : T_star_ X := existT _ j x.
@@ -145,7 +145,7 @@ Proof.
  induction j; intros X Y f ssx; trivial.
  stepr (reformat_T_iter_T_right j (T_ Y) (lift_T_iter _ _ (lift_T_ _ _ f) (S j) ssx)); trivial.
  rewrite <- IHj; trivial.
-Defined.
+Qed.
 
 Let T_iter_lambda_iter: forall (Lambda:T_over_B_distributive) (j : nat) (X:Set) (sbx:T_iter (S j) (B_ X)), 
    lift_B_ _ _ (reformat_T_iter_T_right j X) (lambda_iter_ Lambda (S j) X sbx) =
@@ -172,7 +172,7 @@ Proof.
   rewrite <- reformat_T_iter_T_right_property.
   rewrite lift_T_compose.
   trivial.
-Defined.
+Qed.
 
 
 Let Lam_coiterator_4_2_2_naturality_right: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))), 
@@ -199,7 +199,7 @@ Proof.
  rewrite <- lambda_iter_j_property.
  rewrite lift_B_compose.
  trivial.
-Defined.
+Qed.
 
 
 Let Lam_coiterator_4_2_2_naturality_left: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))),
@@ -217,7 +217,7 @@ Proof.
      (Chi (B_ X) (T_star_coproject_ (T_ (B_ X)) j sbx))); trivial.
  rewrite lift_B_compose.
  trivial.
-Defined.
+Qed.
  
 Let Lam_coiterator_4_11_bisim : forall (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:T_ BS.(bs_states)),
    let X:=BS.(bs_states) in
@@ -358,7 +358,7 @@ Proof.
      trivial.
 
      intros sstr; apply commutativity_F_unfold.
-Defined.
+Qed.
 
 
 Lemma commutativity_Lam_coiterator_rel_image_lifting (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:BS.(bs_states)) : 
@@ -400,7 +400,7 @@ Proof.
  
  apply (lift_B_extensionality_bisim (T_ X) (fun x0=> h (i1 x0)) (fun x0:T_ X=> Beta Lambda (lift_T_ X w.(states) (fun x1 : X => h (i0 x1)) x0))).
  apply (Lam_coiterator_4_11_bisim Lambda (Build_BT_coalgebroid X X_tr)).  
-Defined.
+Qed.
 
 Section setoid_facilities.
 
