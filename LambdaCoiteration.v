@@ -52,22 +52,22 @@ Definition lift_T_iter_extensionality := MT_Functor_Iter_Theory.lift_F_iter_exte
 Definition lift_T_iter_id := MT_Functor_Iter_Theory.lift_F_iter_id.
 Definition lift_T_iter_compose := MT_Functor_Iter_Theory.lift_F_iter_compose.
 
-Let T_star_ (X:Set) := { j:nat & (T_iter j X) }.
+Definition T_star_ (X:Set) := { j:nat & (T_iter j X) }.
 
-Let lift_T_star_ (X Y:Set) (f:X->Y) (hx: T_star_ X) : T_star_ Y := let (j, s_ix) := hx in existT _ j (lift_T_iter _ _ f j s_ix).
+Definition lift_T_star_ (X Y:Set) (f:X->Y) (hx: T_star_ X) : T_star_ Y := let (j, s_ix) := hx in existT _ j (lift_T_iter _ _ f j s_ix).
 
-Let lift_T_star_id :forall X (fx: T_star_ X), fx = lift_T_star_ X X (fun x0 : X => x0) fx.
+Definition lift_T_star_id :forall X (fx: T_star_ X), fx = lift_T_star_ X X (fun x0 : X => x0) fx.
 Proof.
  intros X [j x0]; simpl; assert (hyp0:=lift_T_iter_id X j x0); fold lift_T_iter in hyp0; rewrite <- hyp0; trivial.
 Qed.
 
-Let lift_T_star_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) hx: 
+Definition lift_T_star_compose (X Y Z:Set) (g:X->Y) (f:Y->Z) hx: 
    (fun hx0 => lift_T_star_ Y Z f (lift_T_star_ X Y g hx0)) hx = lift_T_star_ X Z (fun x => f (g x)) hx.
 Proof.
  destruct hx as [j x0]; simpl; rewrite lift_T_iter_compose; trivial.
 Qed.
 
-Let lift_T_star_extensionality: forall (X Y:Set) (f0 f1:X->Y) hx, (forall x, f0 x = f1 x) -> lift_T_star_  _ _ f0 hx = lift_T_star_ _ _ f1 hx.
+Definition lift_T_star_extensionality: forall (X Y:Set) (f0 f1:X->Y) hx, (forall x, f0 x = f1 x) -> lift_T_star_  _ _ f0 hx = lift_T_star_ _ _ f1 hx.
 Proof.
  intros X Y f0 f1 [j x0] hyp_ext;
  simpl.
@@ -76,9 +76,9 @@ Proof.
 Qed.
 
 
-Let T_star_coproject_ (X:Set) (j:nat) (x: T_iter j X) : T_star_ X := existT _ j x.
+Definition T_star_coproject_ (X:Set) (j:nat) (x: T_iter j X) : T_star_ X := existT _ j x.
 
-Let infinite_case_analysis (X Y:Set) (fs:forall j:nat, T_iter j X -> Y)  (h:T_star_ X) : Y := 
+Definition infinite_case_analysis (X Y:Set) (fs:forall j:nat, T_iter j X -> Y)  (h:T_star_ X) : Y := 
     let (i,x):= h in fs i x.
 
 (* Note that this is not a coalgebra in the sense of Set_Coalgebra,
@@ -107,10 +107,10 @@ Fixpoint lambda_iter_ (Lambda : T_over_B_distributive) (j : nat) (X:Set) {struct
              end
          end.
 
-Let lambda_star (Lambda:T_over_B_distributive) (X:Set) : T_star_ (B_ X) -> B_ (T_star_ X) :=
+Definition lambda_star (Lambda:T_over_B_distributive) (X:Set) : T_star_ (B_ X) -> B_ (T_star_ X) :=
    infinite_case_analysis _ _ (fun j s_ibx => lift_B_ _ _ (T_star_coproject_ X j) (lambda_iter_ Lambda j X s_ibx)).
 
-Let Chi (X:Set) : T_star_ (T_ X) -> (T_star_ X) := infinite_case_analysis _ _ (fun j => T_star_coproject_ X (S j)).
+Definition Chi (X:Set) : T_star_ (T_ X) -> (T_star_ X) := infinite_case_analysis _ _ (fun j => T_star_coproject_ X (S j)).
 
 Definition Lam_coiterator (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) : BS.(bs_states) -> w.(states) :=
    match BS with
@@ -137,9 +137,9 @@ Fixpoint reformat_T_iter_T_right (j : nat) (X:Set) : T_iter (S j) X -> T_ (T_ite
   | S j' =>  reformat_T_iter_T_right j' (T_ X)
   end.
 
-Let bracket_T_j_fun  X j x0 := lift_T_ _ _ (T_star_coproject_ X j) (reformat_T_iter_T_right j _ x0).
+Definition bracket_T_j_fun  X j x0 := lift_T_ _ _ (T_star_coproject_ X j) (reformat_T_iter_T_right j _ x0).
 
-Let reformat_T_iter_T_right_property:forall (j:nat) (X Y:Set) (f:X->Y) (ssx:T_iter (S j) X),
+Definition reformat_T_iter_T_right_property:forall (j:nat) (X Y:Set) (f:X->Y) (ssx:T_iter (S j) X),
    lift_T_ _ _ (lift_T_iter _ _ f j) (reformat_T_iter_T_right j X ssx) = reformat_T_iter_T_right j Y (lift_T_iter X Y f (S j) ssx).
 Proof.
  induction j; intros X Y f ssx; trivial.
@@ -147,7 +147,7 @@ Proof.
  rewrite <- IHj; trivial.
 Qed.
 
-Let T_iter_lambda_iter: forall (Lambda:T_over_B_distributive) (j : nat) (X:Set) (sbx:T_iter (S j) (B_ X)), 
+Definition T_iter_lambda_iter: forall (Lambda:T_over_B_distributive) (j : nat) (X:Set) (sbx:T_iter (S j) (B_ X)), 
    lift_B_ _ _ (reformat_T_iter_T_right j X) (lambda_iter_ Lambda (S j) X sbx) =
    Lambda.(lambda_) (T_iter j X) (lift_T_ _ _ (lambda_iter_ Lambda j X) (reformat_T_iter_T_right j (B_ X) sbx)).
 Proof.
@@ -175,7 +175,7 @@ Proof.
 Qed.
 
 
-Let Lam_coiterator_4_2_2_naturality_right: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))), 
+Definition Lam_coiterator_4_2_2_naturality_right: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))), 
    Lambda.(lambda_) _ (lift_T_ _ _ (lambda_star Lambda X) (infinite_case_analysis _ (T_ (T_star_ (B_ X))) (bracket_T_j_fun _) hsbx)) =
    lift_B_ _ (T_ (T_star_ X)) (infinite_case_analysis _ (T_ (T_star_ X)) (bracket_T_j_fun X)) (lambda_star Lambda _ (lift_T_star_ _ _ (Lambda.(lambda_) X) hsbx)).
 Proof.
@@ -202,7 +202,7 @@ Proof.
 Qed.
 
 
-Let Lam_coiterator_4_2_2_naturality_left: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))),
+Definition Lam_coiterator_4_2_2_naturality_left: forall (Lambda:T_over_B_distributive) X (hsbx:T_star_ (T_ (B_ X))),
     lift_B_ _ _ (Chi X) (lambda_star Lambda (T_ X) (lift_T_star_ _ _ (Lambda.(lambda_) X) hsbx)) =
     lambda_star Lambda X (Chi (B_ X) hsbx).
 Proof.
@@ -219,7 +219,7 @@ Proof.
  trivial.
 Qed.
  
-Let Lam_coiterator_4_11_bisim : forall (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:T_ BS.(bs_states)),
+Definition Lam_coiterator_4_11_bisim : forall (Lambda:T_over_B_distributive) (BS: BT_coalgebroid) (x:T_ BS.(bs_states)),
    let X:=BS.(bs_states) in
     let X_tr := BS.(bs_transition) in
      let i1 := T_star_coproject_ X 1 in
@@ -446,10 +446,10 @@ Module Corecursion_Functor:=coproduct_as_Set_Functor identity_as_Set_Functor Wea
 
 Module Import Corecursion_LamCoiter := Lambda_Coiteration_theory MB Corecursion_Functor.
 
-Let il (X:Set) (x:X) : T_ X := inl (states w) x.
-Let ir (X:Set) (w:w.(states)) : T_ X := inr X w.
+Definition il (X:Set) (x:X) : T_ X := inl (states w) x.
+Definition ir (X:Set) (w:w.(states)) : T_ X := inr X w.
 
-Let prim_corec_tupling (X:Set) (f:X->w.(states)) (tx:T_ X) : w.(states) := 
+Definition prim_corec_tupling (X:Set) (f:X->w.(states)) (tx:T_ X) : w.(states) := 
        match tx with 
        | inl x0 => f x0
        | inr w0 => w0

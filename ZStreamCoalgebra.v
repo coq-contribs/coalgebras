@@ -11,7 +11,7 @@ Require Import WeaklyFinalCoalgebra.
 
 (** Implementation of the weakly final coalgebra of streams of integers. *)
 
-Let B:=ZArith.BinInt.Z.
+Definition B:=ZArith.BinInt.Z.
 
 Set Implicit Arguments.
 
@@ -49,7 +49,7 @@ Ltac decomp_coind := intros; let LHS := match goal with
 
 Module Bisimulation_For_Coalgebra_Streams <: Bisimulation_For_Coalgebra.
 
-Let B_pow_inf := Stream B.
+Definition B_pow_inf := Stream B.
 
 Definition F_ (X:Set) := (B * X)%type.
 
