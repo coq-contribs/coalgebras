@@ -86,8 +86,8 @@ Parameter wkpk_id_rht: forall (X Y Z:Set) (f:X->Z) (g:Y->Z),
 
 Axiom F_pres_weak_pullback_arr: forall (X Y Z:Set) (f:X->Z) (g:Y->Z) 
                                   (wxy:weak_pullback _ _ _ (lift_F_ _ _ f) (lift_F_ _ _ g)), 
- lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (projT1 wxy) /\
- lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (projT1 wxy). 
+ lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (proj1_sig wxy) /\
+ lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (proj1_sig wxy). 
 
 End Bisimulation_For_Coalgebra.
 
@@ -119,11 +119,11 @@ Proof.
  intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
- set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12_).
+ set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
  set (id__:=fun s1s2h:RS12_=> exist (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12).
  exists (fun s2s1h => lift_F_ _ _ id_ (gamma (id__ s2s1h)):F_ RS12_).
  intros s1s2_h.
- destruct (hyp s1s2_h) as [hyp1 hyp2].
+ destruct (hyp (sig_of_sigT s1s2_h)) as [hyp1 hyp2].
  destruct s1s2_h as [[s1 s2] hypR].
  split; simpl; simpl in hyp1, hyp2;
  [rewrite <- hyp1 |rewrite <- hyp2];
@@ -137,11 +137,11 @@ Proof.
  intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
- set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12_).
+ set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
  set (id__:=fun s1s2h:RS12_=> exist (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12).
  exists (fun s2s1h => lift_F_ _ _ id__ (gamma (id_ s2s1h)):F_ RS12).
  intros s1s2_h.
- destruct (hyp s1s2_h) as [hyp1 hyp2].
+ destruct (hyp (sigT_of_sig s1s2_h)) as [hyp1 hyp2].
  destruct s1s2_h as [[s1 s2] hypR].
  split; simpl; simpl in hyp1, hyp2;
  [rewrite <- hyp1 |rewrite <- hyp2];
@@ -254,7 +254,7 @@ Defined.
 
 Lemma pre_bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp1 (fst (projT1 x)) = fst (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
+     proj1_sig hyp1 (fst (proj1_sig x)) = fst (proj1_sig (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
  destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
@@ -262,7 +262,7 @@ Qed.
 
 Lemma pre_bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp2 (snd (projT1 x)) = snd (projT1 (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
+     proj1_sig hyp2 (snd (proj1_sig x)) = snd (proj1_sig (pre_bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x)).
 Proof.
  destruct hyp1 as [gamma1 hyp1], hyp2 as [gamma2 hyp2], x as [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp];
  trivial.
@@ -282,8 +282,8 @@ Definition bisim_pullback_structure (S1 S2 S3:F_coalgebra) R12 R23
 
 Definition bisim_pullback_structure_prop1 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp1 (fst (projT1 x)) = 
-     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(fst (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
+     proj1_sig hyp1 (fst (proj1_sig x)) = 
+     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(fst (proj1_sig x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
@@ -291,15 +291,15 @@ Proof.
  set (r3:=fun r:RS23 => (fst (proj1_sig r))).
  unfold bisim_pullback_structure.
  destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [rwt_tmp _].
- stepr (fst (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
+ stepr (fst (proj1_sig (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
  rewrite <- (pre_bisim_pullback_structure_prop1 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
 Qed.
 
 Definition bisim_pullback_structure_prop2 (S1 S2 S3:F_coalgebra) R12 R23
     (hyp1:is_F_bisimulation _ _ R12) (hyp2:is_F_bisimulation _ _ R23) (x:weak_pullback_Rel S1 S2 S3 R12 R23):
-     projT1 hyp2 (snd (projT1 x)) = 
-     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(snd (projT1 x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
+     proj1_sig hyp2 (snd (proj1_sig x)) = 
+     lift_F_ _ _ (fun x0:weak_pullback_Rel S1 S2 S3 R12 R23=>(snd (proj1_sig x0))) (bisim_pullback_structure _ _ _ _ _ hyp1 hyp2 x).
 Proof.
  set (RS12:={s1s2 : states S1 * states S2 | R12 (fst s1s2) (snd s1s2)}).
  set (RS23:={s2s3 : states S2 * states S3 | R23 (fst s2s3) (snd s2s3)}).
@@ -307,7 +307,7 @@ Proof.
  set (r3:=fun r:RS23 => (fst (proj1_sig r))).
  unfold bisim_pullback_structure.
  destruct (F_pres_weak_pullback_arr RS12 RS23 S2.(states) r2 r3 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x)) as [_ rwt_tmp].
- stepr (snd (projT1 (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
+ stepr (snd (proj1_sig (pre_bisim_pullback_structure S1 S2 S3 R12 R23 hyp1 hyp2 x))).
  rewrite <- (pre_bisim_pullback_structure_prop2 S1 S2 S3 R12 R23 hyp1 hyp2 x); reflexivity.
  symmetry; assumption.
 Qed.
@@ -343,19 +343,19 @@ Proof.
  split.
 
   set (r1:=fun r:RS12 => (fst (proj1_sig r))).
-  assert (triangle1:forall z,fst (projT1 z) = r1 (fst (projT1 (i z)))).
+  assert (triangle1:forall z,fst (projT1 z) = r1 (fst (proj1_sig (i z)))).
    clear; intros [[s1 s3] [s2 [hyp1 hyp2]]]; trivial.
   rewrite triangle1.  
   assert (square2:forall x, 
-       lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ (fun x0=>r1 (fst (projT1 x0))) (alpha_X x) =
-       S1.(transition) (r1 (fst (projT1 x)))) .
+       lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ (fun x0=>r1 (fst (proj1_sig x0))) (alpha_X x) =
+       S1.(transition) (r1 (fst (proj1_sig x)))) .
    clear.
    intros x.
    rewrite <- lift_F_compose with (Y:=RS12).
-   destruct (hyp1 (fst (projT1 x))) as [hyp121 _].
+   destruct (hyp1 (fst (proj1_sig x))) as [hyp121 _].
    unfold r1 at 2; rewrite <- hyp121.
    assert (alpha_X_coalg:forall x,  lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ 
-                                     (fun x0=> fst (projT1 x0)) (alpha_X x) = gamma1 (fst (projT1 x)));
+                                     (fun x0=> fst (proj1_sig x0)) (alpha_X x) = gamma1 (fst (proj1_sig x)));
     [ clear; intros x; unfold alpha_X; rewrite <- bisim_pullback_structure_prop1; reflexivity|].
    rewrite alpha_X_coalg; reflexivity.
   rewrite <- square2. 
@@ -365,19 +365,19 @@ Proof.
   intros [[ [[s1 s2] hyp12] [[s2' s3] hyp23]] hyp]; reflexivity...
 
   set (r4:=fun r:RS23 => (snd (proj1_sig r))).
-  assert (triangle1':forall z,snd (projT1 z) = r4 (snd (projT1 (i z)))).
+  assert (triangle1':forall z,snd (projT1 z) = r4 (snd (proj1_sig (i z)))).
    clear; intros [[s1 s3] [s2 [hyp1 hyp2]]]; trivial.
   rewrite triangle1'.  
   assert (square2':forall x, 
-       lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ (fun x0=>r4 (snd (projT1 x0))) (alpha_X x) =
-       S3.(transition) (r4 (snd (projT1 x)))) .
+       lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ (fun x0=>r4 (snd (proj1_sig x0))) (alpha_X x) =
+       S3.(transition) (r4 (snd (proj1_sig x)))) .
    clear.
    intros x.
    rewrite <- lift_F_compose with (Y:=RS23).
-   destruct (hyp2 (snd (projT1 x))) as [_ hyp232].
+   destruct (hyp2 (snd (proj1_sig x))) as [_ hyp232].
    unfold r4 at 2; rewrite <- hyp232.
    assert (alpha_X_coalg':forall x,  lift_F_ (weak_pullback_Rel S1 S2 S3 R12 R23) _ 
-                                     (fun x0=> snd (projT1 x0)) (alpha_X x) = gamma2 (snd (projT1 x)));
+                                     (fun x0=> snd (proj1_sig x0)) (alpha_X x) = gamma2 (snd (proj1_sig x)));
     [ clear; intros x; unfold alpha_X; rewrite <- bisim_pullback_structure_prop2; reflexivity|].
    rewrite alpha_X_coalg'; reflexivity.
   rewrite <- square2'. 

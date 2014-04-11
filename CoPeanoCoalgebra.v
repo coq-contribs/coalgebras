@@ -327,8 +327,8 @@ Defined.
 
 Lemma F_pres_weak_pullback_arr: forall (X Y Z:Set) (f:X->Z) (g:Y->Z) 
                                   (wxy:weak_pullback _ _ _ (lift_F_ _ _ f) (lift_F_ _ _ g)), 
- lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (projT1 wxy) /\
- lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (projT1 wxy). 
+ lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (proj1_sig wxy) /\
+ lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (proj1_sig wxy). 
 Proof.
  intros X Y Z f g [[[ux|x] [uy|y]] h]; simpl in h; unfold wkpk_id_rht, lift_F_; split; trivial; simpl;
  first [rewrite (inl_injection _ _ _ _ h); trivial|discriminate h].

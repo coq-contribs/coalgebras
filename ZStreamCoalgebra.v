@@ -129,7 +129,7 @@ Defined.
 Lemma maximal_bisimulation_is_bisimulation: forall (S1 S2:F_coalgebra), is_F_bisimulation _ _ (maximal_bisimulation S1 S2).
 Proof.
  intros S1 S2.
- exists (fun s1s2h=> (hd_ _ (fst (projT1 s1s2h)), maximal_bisimulation_Str_tl S1 S2 s1s2h)). 
+ exists (fun s1s2h=> (hd_ _ (fst (proj1_sig s1s2h)), maximal_bisimulation_Str_tl S1 S2 s1s2h)). 
  generalize S1 S2.
  intros [X_st X_tr] [Y_st Y_tr] [[x y] [hyp_hd hyp_tl]].
  simpl; split; rewrite surjective_pairing; trivial. 
@@ -205,8 +205,8 @@ Defined.
 
 Lemma F_pres_weak_pullback_arr: forall (X Y Z:Set) (f:X->Z) (g:Y->Z) 
                                   (wxy:weak_pullback _ _ _ (lift_F_ _ _ f) (lift_F_ _ _ g)), 
- lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (projT1 wxy) /\
- lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (projT1 xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (projT1 wxy). 
+ lift_F_ (weak_pullback _ _ _ f g) X (fun xy=>fst (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  fst (proj1_sig wxy) /\
+ lift_F_ (weak_pullback _ _ _ f g) Y (fun xy=>snd (proj1_sig xy)) (wkpk_id_rht _ _ _ _ _ wxy) =  snd (proj1_sig wxy). 
 Proof.
  intros X Y Z f g [[[b0 x] [b1 y]] h].
  simpl in h.
