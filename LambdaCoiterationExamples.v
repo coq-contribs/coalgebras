@@ -85,7 +85,7 @@ Lemma commutativity_Conv_Cons_2 (Lambda:T_over_B_distributive) (BS: BT_coalgebro
  Lam_coiterator Lambda BS x (=) Cons (fst (lift_B_ _ _ (fun s0=>Beta Lambda (lift_T_ _ _ (Lam_coiterator Lambda BS) s0)) (BS.(bs_transition) x)))
                            (snd (lift_B_ _ _ (fun s0 => Beta Lambda (lift_T_ _ _ (Lam_coiterator Lambda BS) s0)) (BS.(bs_transition) x))).
 Proof.
- rewrite <- lift_B_compose with (Y:=T_ (Str.(states))).
+ rewrite <- (lift_B_compose _ (T_ (Str.(states))) _).
  apply commutativity_Conv_Cons_1.
 Qed.
 

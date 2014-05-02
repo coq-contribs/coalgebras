@@ -14,7 +14,6 @@ using intensional commutativity of diagrams. The original definitions come from 
 
 *)
 
-
 Require Export LambdaCoiteration.
 
 Module Lambda_Bisimulation_theory (MB:Weakly_Final_Coalgebra) (MT:Set_Functor).
@@ -113,14 +112,15 @@ Proof.
   rewrite hyp_rewrite_tmp; clear hyp_rewrite_tmp.
 
   (* triangle2 *)
-  rewrite <- (lift_B_compose (T_iter j (T_ X)) (T_iter j X) X); fold lift_B_.
+  rewrite <- (lift_B_compose (T_iter j (T_ X)) (T_iter j X) X _
+                             (iterate_algebra j (Build_F_algebra X beta_X))).
 
   assert (left_commut:lambda_iter_ (Build_T_over_B_distributive lam_ lam_nat_) j X tmp=
           lift_B_ (T_iter j (T_ X)) (T_iter j X) (lift_T_iter (T_ X) X beta_X j)
         (lambda_iter_ (Build_T_over_B_distributive lam_ lam_nat_) j 
            (T_ X) (lift_T_iter (T_ (B_ X)) (B_ (T_ X)) (lam_ X) j tjbx))); [|rewrite left_commut; apply lift_B_extensionality; trivial].
   subst tmp.
-  rewrite <- (lift_T_iter_compose (T_ (B_ X)) (B_ (T_ X))); fold lift_T_iter.
+  rewrite <- (lift_T_iter_compose (T_ (B_ X)) (B_ (T_ X)) _ (lam_ X)). fold lift_T_iter.
   set (tmp2:=lift_T_iter (T_ (B_ X)) (B_ (T_ X)) (lam_ X) j tjbx).
   symmetry.
   apply lambda_iter_naturality.
@@ -271,9 +271,9 @@ Definition is_lambda_bisimulation (S1 S2:TB_bialgebra)
  { gamma : {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) | lR (fst s1s2) (snd s1s2)} ->
            B_ (T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) | lR (fst s1s2) (snd s1s2)}) |
     forall  (s1s2h:{s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) | lR (fst s1s2) (snd s1s2)}),
-(lift_B_ _ _ (fun fr=>S1.(algebra_part)(lift_T_ _ _  (fun s1s2h_=>fst (proj1_sig s1s2h_)) fr ) ) (gamma s1s2h) = 
+(lift_B_ _ _ (fun fr=>S1.(algebra_part)(lift_T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) | lR (fst s1s2) (snd s1s2)} _  (fun s1s2h_ =>fst (proj1_sig s1s2h_)) fr ) ) (gamma s1s2h) = 
 transition S1.(coalgebra_part) (fst (proj1_sig s1s2h)))  /\
-(lift_B_ _ _ (fun fr=>S2.(algebra_part)(lift_T_ _ _  (fun s1s2h_=>snd (proj1_sig s1s2h_)) fr ) ) (gamma s1s2h) = 
+(lift_B_ _ _ (fun fr=>S2.(algebra_part)(lift_T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) | lR (fst s1s2) (snd s1s2)} _  (fun s1s2h_=>snd (proj1_sig s1s2h_)) fr ) ) (gamma s1s2h) = 
 transition S2.(coalgebra_part) (snd (proj1_sig s1s2h)))  }.
 
 Definition is_lambda_bisimulation_strong (S1 S2:TB_bialgebra) 
@@ -281,9 +281,9 @@ Definition is_lambda_bisimulation_strong (S1 S2:TB_bialgebra)
  { gamma : {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) & slR (fst s1s2) (snd s1s2)} ->
            B_ (T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) & slR (fst s1s2) (snd s1s2)}) |
     forall  (s1s2h:{s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) & slR (fst s1s2) (snd s1s2)}),
-(lift_B_ _ _ (fun fr=>S1.(algebra_part)(lift_T_ _ _  (fun s1s2h_=>fst (projT1 s1s2h_)) fr ) ) (gamma s1s2h) = 
+(lift_B_ _ _ (fun fr=>S1.(algebra_part)(lift_T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) & slR (fst s1s2) (snd s1s2)} _  (fun s1s2h_=>fst (projT1 s1s2h_)) fr ) ) (gamma s1s2h) = 
 transition S1.(coalgebra_part) (fst (projT1 s1s2h)))  /\
-(lift_B_ _ _ (fun fr=>S2.(algebra_part)(lift_T_ _ _  (fun s1s2h_=>snd (projT1 s1s2h_)) fr ) ) (gamma s1s2h) = 
+(lift_B_ _ _ (fun fr=>S2.(algebra_part)(lift_T_ {s1s2 : states (coalgebra_part S1) * states (coalgebra_part S2) & slR (fst s1s2) (snd s1s2)} _  (fun s1s2h_=>snd (projT1 s1s2h_)) fr ) ) (gamma s1s2h) = 
 transition S2.(coalgebra_part) (snd (projT1 s1s2h)))  }.
 
 (* Theorem 4.1.2 in [1] *)

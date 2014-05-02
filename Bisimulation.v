@@ -59,15 +59,15 @@ Definition is_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -
  { gamma : {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)} -> 
             F_ {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)} | 
     forall  (s1s2_h:{s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}), 
-            lift_F_ _ _ (fun z=>fst(proj1_sig z)) (gamma s1s2_h)=S1.(transition) (fst(proj1_sig s1s2_h)) /\
-            lift_F_ _ _ (fun z=>snd(proj1_sig z)) (gamma s1s2_h)=S2.(transition) (snd(proj1_sig s1s2_h))}.
+            lift_F_ _ _ (fun z : { z : states _ * states _ | _ } =>fst(proj1_sig z)) (gamma s1s2_h)=S1.(transition) (fst(proj1_sig s1s2_h)) /\
+            lift_F_ _ _ (fun z : { z : states _ * states _ | _ } =>snd(proj1_sig z)) (gamma s1s2_h)=S2.(transition) (snd(proj1_sig s1s2_h))}.
 
 Definition is_F_bisimulation_strong (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -> Set) :=
  { gamma : {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)} -> 
             F_ {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)} & 
     forall  (s1s2_h:{s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}), 
-            lift_F_ _ _ (fun z=>fst(projT1 z)) (gamma s1s2_h)=S1.(transition) (fst(projT1 s1s2_h)) /\
-            lift_F_ _ _ (fun z=>snd(projT1 z)) (gamma s1s2_h)=S2.(transition) (snd(projT1 s1s2_h))}.
+            lift_F_ _ _ (fun z :  { z : states _ * states _ &  R (fst z) (snd z) }=>fst(projT1 z)) (gamma s1s2_h)=S1.(transition) (fst(projT1 s1s2_h)) /\
+            lift_F_ _ _ (fun z :  { z : states _ * states _ &  R (fst z) (snd z) }=>snd(projT1 z)) (gamma s1s2_h)=S2.(transition) (snd(projT1 s1s2_h))}.
 
 
 Definition is_maximal_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -> Prop) :=
@@ -324,13 +324,13 @@ Proof.
  set (r3:=fun r:RS23 => (fst (proj1_sig r))).
  set (R12_is_bisim:=exist
          (fun gamma=> forall s1s2_h ,
-           lift_F_ _ _ (fun z =>fst(proj1_sig z))(gamma s1s2_h) = S1.(transition) (fst (proj1_sig s1s2_h)) /\
-           lift_F_ _ _ (fun z =>snd(proj1_sig z))(gamma s1s2_h) =
+           lift_F_ _ _ (fun z : RS12 =>fst(proj1_sig z))(gamma s1s2_h) = S1.(transition) (fst (proj1_sig s1s2_h)) /\
+           lift_F_ _ _ (fun z : RS12 =>snd(proj1_sig z))(gamma s1s2_h) =
                                                      S2.(transition) (snd (proj1_sig s1s2_h))) gamma1 hyp1).
  set (R23_is_bisim:=exist
          (fun gamma=> forall s2s3_h ,
-           lift_F_ _ _ (fun z =>fst(proj1_sig z))(gamma s2s3_h) = S2.(transition) (fst (proj1_sig s2s3_h)) /\
-           lift_F_ _ _ (fun z =>snd(proj1_sig z))(gamma s2s3_h) =
+           lift_F_ _ _ (fun z :RS23 =>fst(proj1_sig z))(gamma s2s3_h) = S2.(transition) (fst (proj1_sig s2s3_h)) /\
+           lift_F_ _ _ (fun z :RS23 =>snd(proj1_sig z))(gamma s2s3_h) =
                                                      S3.(transition) (snd (proj1_sig s2s3_h))) gamma2 hyp2).
  set (X:=weak_pullback _ _ _ r2 r3).
  set (R12_o_R23:={s1s3 : S1.(states) * S3.(states) & {s2  | R12 (fst s1s3) s2 /\ R23 s2 (snd s1s3)}}).

@@ -98,15 +98,15 @@ Definition is_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -
  { gamma : {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)} -> 
             F_ {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)} | 
     forall  (s1s2_h:{s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}), 
-            lift_F_ _ _ (fun z=>fst(proj1_sig z)) (gamma s1s2_h)=S1.(transition) (fst(proj1_sig s1s2_h)) /\
-            lift_F_ _ _ (fun z=>snd(proj1_sig z)) (gamma s1s2_h)=S2.(transition) (snd(proj1_sig s1s2_h))}.
+            lift_F_ {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}  _ (fun z=>fst(proj1_sig z)) (gamma s1s2_h)=S1.(transition) (fst(proj1_sig s1s2_h)) /\
+            lift_F_ {s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}  _ (fun z=>snd(proj1_sig z)) (gamma s1s2_h)=S2.(transition) (snd(proj1_sig s1s2_h))}.
 
 Definition is_F_bisimulation_strong (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -> Set) :=
  { gamma : {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)} -> 
             F_ {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)} & 
     forall  (s1s2_h:{s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}), 
-            lift_F_ _ _ (fun z=>fst(projT1 z)) (gamma s1s2_h)=S1.(transition) (fst(projT1 s1s2_h)) /\
-            lift_F_ _ _ (fun z=>snd(projT1 z)) (gamma s1s2_h)=S2.(transition) (snd(projT1 s1s2_h))}.
+            lift_F_ {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}  _ (fun z=>fst(projT1 z)) (gamma s1s2_h)=S1.(transition) (fst(projT1 s1s2_h)) /\
+            lift_F_ {s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}  _ (fun z=>snd(projT1 z)) (gamma s1s2_h)=S2.(transition) (snd(projT1 s1s2_h))}.
 
 
 Definition is_maximal_F_bisimulation (S1 S2:F_coalgebra) (R:S1.(states) -> S2.(states) -> Prop) :=

@@ -190,7 +190,7 @@ Proof.
  unfold bracket_T_j_fun.
  rewrite lift_T_compose. 
  stepr (lam _  (lift_T_ _ _ (fun sjbx0: T_iter j (B_ X) => lift_B_ _ _ (T_star_coproject_ X j) (lambda_iter_ (Build_T_over_B_distributive lam nat_lam) j X sjbx0))  (reformat_T_iter_T_right j (B_ X) sbx))); trivial.
- rewrite <- lift_T_compose with (Y:=B_ (T_iter j X)).
+ rewrite <- (lift_T_compose _ (B_ (T_iter j X)) _).
  rewrite (nat_lam (T_iter j X) _ (T_star_coproject_ X j)).
  simpl.
  assert (lambda_iter_j_property:=T_iter_lambda_iter (Build_T_over_B_distributive lam nat_lam) j X sbx).
@@ -319,11 +319,11 @@ Proof.
                  (lift_T_star_ _ _ (lam (T_ X)) (lift_T_star_ (T_ X) (T_ (B_ (T_ X))) (lift_T_ X (B_ (T_ X)) X_tr) hsx)))).
      rewrite (lift_B_extensionality _ (T_ (T_star_ X)) (fun hssx=> infinite_case_analysis (T_ X) (T_ (T_star_ X)) bracket_T_j (Chi (T_ X) hssx))
                            (fun hssx => lift_T_ _ _ (Chi X) (infinite_case_analysis _ (T_ (T_star_ (T_ X))) (bracket_T_j_fun _) hssx)) bx square7).
-     rewrite <- lift_B_compose with (Y:=T_ (T_star_ (T_ X))).
+     rewrite <- (lift_B_compose _ (T_ (T_star_ (T_ X))) _).
      subst bx.
      rewrite <- Lam_coiterator_4_2_2_naturality_right.
      unfold alpha_sigma, alpha_phi.
-     rewrite <- lift_T_compose with (Y:=B_ (T_star_ (T_ X))).
+     rewrite <- (lift_T_compose _ (B_ (T_star_ (T_ X))) _).
      rewrite <- lift_T_compose with (X:=T_star_ X) (Y:=T_star_ (B_ (T_ X))).
      (* 8 *)
      assert (square8:lift_T_ _ _ (lift_T_star_ X (B_ (T_ X)) X_tr) (infinite_case_analysis _ _ bracket_T_j hsx)=
@@ -350,7 +350,7 @@ Proof.
                                              lift_T_ _ _ (fun hx=>lift_B_ _ _ h (alpha_phi hx)) shx).
       clear shx; intros shx; apply lift_T_extensionality; apply (commutativity_F_unfold HX_as_coalgebra).
      rewrite T_lifts_h_finality.
-     rewrite <- lift_T_compose with (Y:=B_ (T_star_ X)).
+     rewrite <- (lift_T_compose _ (B_ (T_star_ X)) _).
 
      assert (rwt_tmp:=nat_lam (T_star_ X) w.(states) h (lift_T_ _ (B_ (T_star_ X)) alpha_phi shx)).
      fold lift_T_ T_ B_; fold B_ in rwt_tmp. 
