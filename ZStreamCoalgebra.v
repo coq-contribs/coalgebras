@@ -41,8 +41,8 @@ End Streams.
 Unset Implicit Arguments.
 
 Ltac decomp_coind := intros; let LHS := match goal with
-                                        | |-(?a = _) => constr: a
-                                        | |-(_ ?a _) => constr: a
+                                        | |-(?a = _) => constr:(a)
+                                        | |-(_ ?a _) => constr:(a)
                                         end
                              in rewrite (unfold_Stream LHS); reflexivity.
 
