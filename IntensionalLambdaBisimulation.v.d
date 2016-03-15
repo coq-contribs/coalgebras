@@ -1,0 +1,2 @@
+IntensionalLambdaBisimulation.vo IntensionalLambdaBisimulation.glob IntensionalLambdaBisimulation.v.beautified: IntensionalLambdaBisimulation.v ./LambdaCoiteration.vo
+IntensionalLambdaBisimulation.vio: IntensionalLambdaBisimulation.v ./LambdaCoiteration.vio
