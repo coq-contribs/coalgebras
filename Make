@@ -1,5 +1,4 @@
 -R . Coalgebras
-
 AxiomaticLambdaBisimulationExample.v
 Bisimulation.v
 CoPeanoCoalgebra.v

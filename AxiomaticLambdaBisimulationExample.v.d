@@ -1,2 +1,0 @@
-AxiomaticLambdaBisimulationExample.vo AxiomaticLambdaBisimulationExample.glob AxiomaticLambdaBisimulationExample.v.beautified: AxiomaticLambdaBisimulationExample.v ./LambdaCoiterationExamples.vo ./IntensionalLambdaBisimulation.vo ./ZStreamCoalgebra.vo
-AxiomaticLambdaBisimulationExample.vio: AxiomaticLambdaBisimulationExample.v ./LambdaCoiterationExamples.vio ./IntensionalLambdaBisimulation.vio ./ZStreamCoalgebra.vio
