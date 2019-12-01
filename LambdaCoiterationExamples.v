@@ -469,7 +469,7 @@ Section using_cofix.
 
 Lemma pointwise_plus_pointwise_plus_tl :forall x xs ys, pointwise_plus_tl x xs ys (=) pointwise_plus (Cons x xs) ys.
 Proof.
- cofix.
+ cofix pointwise_plus_pointwise_plus_tl.
  destruct xs as [x0 xs], ys as [y0 ys].
  rewrite (pointwise_plus_tl_cofixed x (Cons x0 xs) (Cons y0 ys)).
  rewrite pointwise_plus_cofixed.
@@ -479,7 +479,7 @@ Qed.
 
 Lemma pointwise_plus_comm :forall xs ys, pointwise_plus xs ys (=) pointwise_plus ys xs.
 Proof.
- cofix.
+ cofix pointwise_plus_comm.
  destruct xs as [x0 xs], ys as [y0 ys].
  rewrite pointwise_plus_cofixed.
  replace (pointwise_plus (Cons y0 ys) (Cons x0 xs)) with (Cons (y0 + x0) (pointwise_plus ys xs)); [|symmetry ; apply pointwise_plus_cofixed].

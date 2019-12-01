@@ -285,11 +285,11 @@ Proof.
   exists (maximal_bisimulation_is_bisimulation S1 S2); trivial.
   intros R' [hyp_R' _].
   revert S1 S2 R' hyp_R'.
-  cofix.
+  cofix maximal_bisimulation_is_maximal.
   intros [X X_tr] [Y Y_tr] R' h_coind s1 s2 hyp'.
   set (hyp:=projT2 h_coind).
   set (gamma:=projT1 h_coind).
-  set (s1s2h:=existS (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
+  set (s1s2h:=existT (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
   destruct (hyp s1s2h) as [hyp1 hyp2].
   clear hyp.
   unfold lift_F_ in hyp1,hyp2; simpl in hyp1, hyp2.
@@ -411,7 +411,7 @@ Lemma CoPeano_unfold_bisim_unique:forall (S0:F_coalgebra) f,
                                         end) ->
         forall s, CoPeano_unfold S0 s(=) f s.
 Proof.
- cofix.
+ cofix CoPeano_unfold_bisim_unique.
  intros [X X_tr] f hyp x.
  rewrite (hyp x).
  unfold transition.

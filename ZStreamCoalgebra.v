@@ -144,11 +144,11 @@ Proof.
   exists (maximal_bisimulation_is_bisimulation S1 S2); trivial.
   intros R' [hyp_R' _].
   revert S1 S2 R' hyp_R'.
-  cofix.
+  cofix maximal_bisimulation_is_maximal.
   intros [X X_tr] [Y Y_tr] R' h_coind s1 s2 hyp'.
   constructor.
    destruct h_coind as [gamma hyp].
-   set (s1s2h:=existS (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
+   set (s1s2h:=existT (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
    destruct (hyp s1s2h) as [hyp1 hyp2].
    clear hyp.
    unfold F_ in gamma.
@@ -160,7 +160,7 @@ Proof.
 
    apply (maximal_bisimulation_is_maximal _ _ R' h_coind).
    destruct h_coind as [gamma hyp].
-   set (s1s2h:=existS (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
+   set (s1s2h:=existT (fun s1s2=> R' (fst s1s2) (snd s1s2)) (s1,s2) hyp').
    destruct (hyp s1s2h) as [hyp1 hyp2].
    clear hyp.
    unfold F_ in gamma.
@@ -278,7 +278,7 @@ Lemma Str_unfold_bisim_unique:forall (S0:F_coalgebra) f,
    (forall (s0: S0.(states)), (f s0) = Cons (hd_ S0 s0) (f (tl_ S0 s0))) -> forall s, 
         Str_unfold S0 s(=) f s.
 Proof.
- cofix.
+ cofix Str_unfold_bisim_unique.
  intros S0 f H s0.
  rewrite Str_unfold_unfolded.
  rewrite (H s0).
