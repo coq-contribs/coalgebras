@@ -119,7 +119,7 @@ Proof.
  intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
- set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
+ set (id_:=fun s1s2h:RS12=> existT (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
  set (id__:=fun s1s2h:RS12_=> exist (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12).
  exists (fun s2s1h => lift_F_ _ _ id_ (gamma (id__ s2s1h)):F_ RS12_).
  intros s1s2_h.
@@ -137,7 +137,7 @@ Proof.
  intros [gamma hyp].
  set (RS12:={s1s2 : states S1 * states S2 | R (fst s1s2) (snd s1s2)}).
  set (RS12_:={s1s2 : states S1 * states S2 & R (fst s1s2) (snd s1s2)}).
- set (id_:=fun s1s2h:RS12=> existS (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
+ set (id_:=fun s1s2h:RS12=> existT (fun z=>R (fst z) (snd z)) (fst (proj1_sig s1s2h),snd (proj1_sig s1s2h)) (proj2_sig s1s2h):RS12_).
  set (id__:=fun s1s2h:RS12_=> exist (fun z=>R (fst z) (snd z)) (fst (projT1 s1s2h),snd (projT1 s1s2h)) (projT2 s1s2h):RS12).
  exists (fun s2s1h => lift_F_ _ _ id__ (gamma (id_ s2s1h)):F_ RS12).
  intros s1s2_h.
@@ -492,7 +492,7 @@ Proof.
  red.
  set (R0_:={s1s2 : states S1 * states S2 & R0 (fst s1s2) (snd s1s2)}).
  set (R1_:={s1s2 : states S1 * states S2 | R1 (fst s1s2) (snd s1s2)}).
- set (i10:= (fun (s0s1h:R1_) => existS (fun s1s2=> R0 (fst s1s2) (snd s1s2)) (fst (proj1_sig s0s1h), snd (proj1_sig s0s1h)) (hypsub1 (fst (proj1_sig s0s1h)) (snd (proj1_sig s0s1h)) (proj2_sig s0s1h))) : R1_ -> R0_). 
+ set (i10:= (fun (s0s1h:R1_) => existT (fun s1s2=> R0 (fst s1s2) (snd s1s2)) (fst (proj1_sig s0s1h), snd (proj1_sig s0s1h)) (hypsub1 (fst (proj1_sig s0s1h)) (snd (proj1_sig s0s1h)) (proj2_sig s0s1h))) : R1_ -> R0_). 
  set (i01:= (fun (s0s1h:R0_) => exist (fun s1s2=> R1 (fst s1s2) (snd s1s2)) (fst (projT1 s0s1h), snd (projT1 s0s1h)) (hypsub2 (fst (projT1 s0s1h)) (snd (projT1 s0s1h)) (projT2 s0s1h))) : R0_ -> R1_). 
  exists (fun r1_=> lift_F_ _ _ i01 (gamma0 (i10 r1_))).
  intros s1s2h.
